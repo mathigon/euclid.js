@@ -1,6 +1,6 @@
 {
   "name": "@mathigon/euclid",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "Euclidean geometry classes and tools for JavaScript.",
   "keywords": [
     "geometry",

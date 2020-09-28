@@ -7,6 +7,6 @@ const options = {
 };
 
 module.exports = [
-  {...options, output: {file: 'dist/fermat.cjs.js', format: 'cjs'}},
-  {...options, output: {file: 'dist/fermat.esm.js', format: 'esm'}}
+  {...options, output: {file: 'dist/euclid.cjs.js', format: 'cjs'}},
+  {...options, output: {file: 'dist/euclid.esm.js', format: 'esm'}}
 ];
