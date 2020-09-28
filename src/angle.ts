@@ -8,11 +8,11 @@ import {nearlyEquals} from '@mathigon/fermat';
 import {Arc} from './arc';
 import {Line} from './line';
 import {Point} from './point';
-import {GeoElement, SimplePoint, TransformMatrix, TWO_PI} from './utilities';
+import {GeoShape, SimplePoint, TransformMatrix, TWO_PI} from './utilities';
 
 
 /** A 2-dimensional angle class, defined by three points. */
-export class Angle implements GeoElement {
+export class Angle implements GeoShape {
   readonly type = 'angle';
 
   constructor(readonly a: Point, readonly b: Point, readonly c: Point) {}
@@ -63,6 +63,21 @@ export class Angle implements GeoElement {
   /** Returns the Arc element corresponding to this angle. */
   get arc() {
     return new Arc(this.b, this.a, this.rad);
+  }
+
+  // ---------------------------------------------------------------------------
+  // These functions are just included for compatibility with GeoPath
+
+  project() {
+    return this.c;
+  }
+
+  at() {
+    return this.c;
+  }
+
+  contains() {
+    return false;
   }
 
   // ---------------------------------------------------------------------------
