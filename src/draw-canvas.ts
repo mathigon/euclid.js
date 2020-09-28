@@ -6,7 +6,7 @@
 
 /// <reference lib="dom" />
 import {isCircle, isPolygon, isPolyline, isSegment} from './types';
-import {GeoElement} from './utilities';
+import {GeoElement, TWO_PI} from './utilities';
 
 
 export interface CanvasDrawingOptions {
@@ -41,7 +41,7 @@ export function drawCanvas(ctx: CanvasRenderingContext2D, obj: GeoElement,
     ctx.lineTo(obj.p2.x, obj.p2.y);
 
   } else if (isCircle(obj)) {
-    ctx.arc(obj.c.x, obj.c.y, obj.r, 0, 2 * Math.PI);
+    ctx.arc(obj.c.x, obj.c.y, obj.r, 0, TWO_PI);
 
   } else if (isPolygon(obj)) {
     ctx.moveTo(obj.points[0].x, obj.points[0].y);

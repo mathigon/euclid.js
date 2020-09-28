@@ -9,7 +9,7 @@ import {Circle} from './circle';
 import {intersections} from './intersection';
 import {Line, Segment} from './line';
 import {ORIGIN, Point} from './point';
-import {GeoShape, TransformMatrix} from './utilities';
+import {GeoShape, TransformMatrix, TWO_PI} from './utilities';
 
 
 /** A polygon defined by its vertex points. */
@@ -137,7 +137,7 @@ export class Polygon implements GeoShape {
 
   /** Creates a regular polygon. */
   static regular(n: number, radius = 1) {
-    const da = 2 * Math.PI / n;
+    const da = TWO_PI / n;
     const a0 = Math.PI / 2 - da / 2;
 
     const points = tabulate((i) => Point.fromPolar(a0 + da * i, radius), n);

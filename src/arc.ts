@@ -37,14 +37,12 @@ export class Arc implements GeoShape {
 
   get minor(): this {
     if (this.angle <= Math.PI) return this;
-    return new (<any> this.constructor)(this.c, this.end,
-        2 * Math.PI - this.angle);
+    return new (<any> this.constructor)(this.c, this.end, TWO_PI - this.angle);
   }
 
   get major(): this {
     if (this.angle >= Math.PI) return this;
-    return new (<any> this.constructor)(this.c, this.end,
-        2 * Math.PI - this.angle);
+    return new (<any> this.constructor)(this.c, this.end, TWO_PI - this.angle);
   }
 
   get center() {

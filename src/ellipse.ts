@@ -8,7 +8,7 @@ import {quadratic} from '@mathigon/fermat';
 import {Angle} from './angle';
 import {Line} from './line';
 import {ORIGIN, Point} from './point';
-import {GeoShape, TransformMatrix} from './utilities';
+import {GeoShape, TransformMatrix, TWO_PI} from './utilities';
 
 
 export class Ellipse implements GeoShape {
@@ -66,7 +66,7 @@ export class Ellipse implements GeoShape {
   }
 
   at(t: number) {
-    const th = 2 * Math.PI * t;
+    const th = TWO_PI * t;
     return this.c.shift(this.a * Math.cos(th), this.b * Math.sin(th));
   }
 

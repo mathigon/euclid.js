@@ -46,7 +46,7 @@ export class Circle implements GeoShape {
   }
 
   at(t: number) {
-    const a = 2 * Math.PI * t;
+    const a = TWO_PI * t;
     return this.c.shift(this.r * Math.cos(a), this.r * Math.sin(a));
   }
 
