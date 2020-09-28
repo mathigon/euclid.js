@@ -17,3 +17,4 @@ export * from './src/point';
 export * from './src/polygon';
 export * from './src/rectangle';
 export * from './src/types';
+export {GeoElement, GeoShape, rad, SimplePoint, TransformMatrix} from './src/utilities';
