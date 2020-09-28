@@ -1,6 +1,6 @@
 {
   "name": "@mathigon/euclid",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Euclidean geometry classes and tools for JavaScript.",
   "keywords": [
     "geometry",
@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@mathigon/core": "^0.5.2",
-    "@mathigon/fermat": "^0.5.2"
+    "@mathigon/fermat": "^0.6.0"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "6.0.0",

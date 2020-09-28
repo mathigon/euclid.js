@@ -40,7 +40,7 @@ using
 Now, simply import all functions and classes you need, using
 
 ```js
-import {Complex, gcd} from '@mathigon/euclid'
+import {Point, Line} from '@mathigon/euclid'
 ```
 
 
