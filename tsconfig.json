@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "lib": [
+      "es2016"
+    ],
+    "moduleResolution": "Node",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
