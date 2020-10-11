@@ -5,7 +5,7 @@
 
 
 import {total} from '@mathigon/core';
-import {nearlyEquals, roundTo, square, clamp, lerp} from '@mathigon/fermat';
+import {nearlyEquals, roundTo, square, clamp, lerp, Random} from '@mathigon/fermat';
 import {Bounds} from './bounds';
 import {Line} from './line';
 import {GeoElement, rad, SimplePoint, TransformMatrix} from './utilities';
@@ -131,6 +131,12 @@ export class Point implements GeoElement, SimplePoint {
   /** Creates a point from polar coordinates. */
   static fromPolar(angle: number, r = 1) {
     return new Point(r * Math.cos(angle), r * Math.sin(angle));
+  }
+
+  static random(b: Bounds) {
+    const x = Random.uniform(b.xMin, b.xMax);
+    const y = Random.uniform(b.yMin, b.yMax);
+    return new Point(x, y);
   }
 
   // ---------------------------------------------------------------------------

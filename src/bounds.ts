@@ -4,6 +4,7 @@
 // =============================================================================
 
 
+import {isBetween} from '@mathigon/fermat';
 import {Point} from './point';
 import {Rectangle} from './rectangle';
 
@@ -12,6 +13,18 @@ export class Bounds {
 
   constructor(public xMin: number, public xMax: number, public yMin: number,
     public yMax: number) {
+  }
+
+  contains(p: Point) {
+    return this.containsX(p) && this.containsY(p);
+  }
+
+  containsX(p: Point) {
+    return isBetween(p.x, this.xMin, this.xMax);
+  }
+
+  containsY(p: Point) {
+    return isBetween(p.y, this.yMin, this.yMax);
   }
 
   get dx() {
