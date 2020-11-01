@@ -31,9 +31,9 @@
     "@mathigon/fermat": "^0.6.0"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "6.0.0",
+    "@rollup/plugin-typescript": "6.1.0",
     "@types/tape": "4.13.0",
-    "rollup": "2.28.2",
+    "rollup": "2.32.1",
     "tape": "5.0.1",
     "ts-node": "9.0.0",
     "tslib": "2.0.3",
