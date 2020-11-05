@@ -46,4 +46,8 @@ export class Bounds {
   get rect() {
     return new Rectangle(new Point(this.xMin, this.xMin), this.dx, this.dy);
   }
+
+  get center() {
+    return new Point(this.xMin + this.dx / 2, this.yMin + this.dy / 2);
+  }
 }
