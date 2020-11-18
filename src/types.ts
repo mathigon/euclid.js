@@ -7,6 +7,7 @@
 import {Angle} from './angle';
 import {Arc, Sector} from './arc';
 import {Circle} from './circle';
+import {Ellipse} from './ellipse';
 import {Line, Ray, Segment} from './line';
 import {Point} from './point';
 import {Polygon, Polyline} from './polygon';
@@ -48,6 +49,10 @@ export function isSegment(shape: GeoElement): shape is Segment {
 
 export function isCircle(shape: GeoElement): shape is Circle {
   return shape.type === 'circle';
+}
+
+export function isEllipse(shape: GeoElement): shape is Ellipse {
+  return shape.type === 'ellipse';
 }
 
 export function isArc(shape: GeoElement): shape is Arc {
