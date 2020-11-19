@@ -8,6 +8,7 @@ import {nearlyEquals} from '@mathigon/fermat';
 import {Arc} from './arc';
 import {Line} from './line';
 import {ORIGIN, Point} from './point';
+import {Rectangle} from './rectangle';
 import {GeoShape, TransformMatrix, TWO_PI} from './utilities';
 
 
@@ -36,6 +37,14 @@ export class Circle implements GeoShape {
     const p1 = this.at(t);
     const p2 = this.c.rotate(Math.PI / 2, p1);
     return new Line(p1, p2);
+  }
+
+  collision(r: Rectangle) {
+    const tX = (this.c.x < r.p.x) ? r.p.x : (this.c.x > r.p.x + r.w) ? r.p.x + r.w : this.c.x;
+    const tY = (this.c.y < r.p.y) ? r.p.y : (this.c.y > r.p.y + r.h) ? r.p.y + r.h : this.c.y;
+
+    const d = Point.distance(this.c, new Point(tX, tY));
+    return d <= this.r;
   }
 
   // ---------------------------------------------------------------------------
