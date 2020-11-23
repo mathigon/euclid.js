@@ -93,11 +93,11 @@ export class Line implements GeoShape {
   }
 
   /** Checks if a point p lies on this line. */
-  contains(p: Point) {
+  contains(p: Point, tolerance?: number) {
     // det([[p.x, p.y, 1],[p1.x, p1.y, 1],[p2.x, ,p2.y 1]])
     const det = p.x * (this.p1.y - this.p2.y) + this.p1.x * (this.p2.y - p.y) +
                 this.p2.x * (p.y - this.p1.y);
-    return nearlyEquals(det, 0);
+    return nearlyEquals(det, 0, tolerance);
   }
 
   at(t: number) {
@@ -132,8 +132,9 @@ export class Line implements GeoShape {
     return this.shift(p.x, p.y);
   }
 
-  equals(other: Line) {
-    return this.contains(other.p1) && this.contains(other.p2);
+  equals(other: Line, tolerance?: number) {
+    if (other.type !== 'line') return false;
+    return this.contains(other.p1, tolerance) && this.contains(other.p2, tolerance);
   }
 }
 
@@ -146,9 +147,9 @@ export class Ray extends Line {
     return new Ray(p1, p2);
   }
 
-  equals(other: Ray) {
+  equals(other: Ray, tolerance?: number) {
     if (other.type !== 'ray') return false;
-    return this.p1.equals(other.p1) && this.contains(other.p2);
+    return this.p1.equals(other.p1, tolerance) && this.contains(other.p2, tolerance);
   }
 }
 
@@ -157,9 +158,9 @@ export class Ray extends Line {
 export class Segment extends Line {
   readonly type = 'segment';
 
-  contains(p: Point) {
+  contains(p: Point, tolerance?: number) {
     if (!Line.prototype.contains.call(this, p)) return false;
-    if (nearlyEquals(this.p1.x, this.p2.x)) {
+    if (nearlyEquals(this.p1.x, this.p2.x, tolerance)) {
       return isBetween(p.y, this.p1.y, this.p2.y);
     } else {
       return isBetween(p.x, this.p1.x, this.p2.x);
@@ -183,9 +184,10 @@ export class Segment extends Line {
     return new Segment(this.at(x), this.at(1 - x));
   }
 
-  equals(other: Segment, oriented = false) {
+  equals(other: Segment, tolerance?: number, oriented = false) {
     if (other.type !== 'segment') return false;
-    return (this.p1.equals(other.p1) && this.p2.equals(other.p2)) ||
-           (!oriented && this.p1.equals(other.p2) && this.p2.equals(other.p1));
+
+    return (this.p1.equals(other.p1, tolerance) && this.p2.equals(other.p2, tolerance)) ||
+           (!oriented && this.p1.equals(other.p2, tolerance) && this.p2.equals(other.p1, tolerance));
   }
 }

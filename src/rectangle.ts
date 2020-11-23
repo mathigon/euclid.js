@@ -65,9 +65,9 @@ export class Rectangle implements GeoShape {
 
   // ---------------------------------------------------------------------------
 
-  contains(p: Point) {
-    return isBetween(p.x, this.p.x, this.p.x + this.w) &&
-           isBetween(p.y, this.p.y, this.p.y + this.h);
+  contains(p: Point, tolerance?: number) {
+    return isBetween(p.x, this.p.x, this.p.x + this.w, tolerance) &&
+           isBetween(p.y, this.p.y, this.p.y + this.h, tolerance);
   }
 
   project(p: SimplePoint): Point {

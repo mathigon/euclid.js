@@ -188,9 +188,9 @@ export class Point implements GeoElement, SimplePoint {
     return this.shift(p.x, p.y);  // Alias for .add()
   }
 
-  equals(other: any) {
+  equals(other: any, precision?: number) {
     // TODO Fix type signature for `other`
-    return nearlyEquals(this.x, other.x) && nearlyEquals(this.y, other.y);
+    return nearlyEquals(this.x, other.x, precision) && nearlyEquals(this.y, other.y, precision);
   }
 }
 

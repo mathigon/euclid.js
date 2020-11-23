@@ -90,7 +90,7 @@ export class Circle implements GeoShape {
     return this.shift(p.x, p.y);
   }
 
-  equals(other: Circle) {
-    return nearlyEquals(this.r, other.r) && this.c.equals(other.c);
+  equals(other: Circle, tolerance?: number) {
+    return nearlyEquals(this.r, other.r, tolerance) && this.c.equals(other.c, tolerance);
   }
 }

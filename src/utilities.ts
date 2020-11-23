@@ -21,12 +21,12 @@ export interface GeoElement {
   scale(sx: number, sy?: number): GeoElement;
   shift(x: number, y?: number): GeoElement;
   translate(p: Point): GeoElement;
-  equals(other: GeoElement, oriented?: boolean): boolean;
+  equals(other: GeoElement, tolerance?: number, oriented?: boolean): boolean;
 }
 
 export interface GeoShape extends GeoElement {
   project(p: Point): Point;
-  contains(p: Point): boolean;
+  contains(p: Point, tolerance?: number): boolean;
   at(t: number): Point;
 }
 
