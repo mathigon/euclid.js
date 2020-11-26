@@ -28,6 +28,12 @@ export interface GeoShape extends GeoElement {
   project(p: Point): Point;
   contains(p: Point, tolerance?: number): boolean;
   at(t: number): Point;
+
+  rotate(angle: number, center?: SimplePoint): GeoShape;
+  reflect(l: Line): GeoShape;
+  scale(sx: number, sy?: number): GeoShape;
+  shift(x: number, y?: number): GeoShape;
+  translate(p: Point): GeoShape;
 }
 
 export const TWO_PI = 2 * Math.PI;

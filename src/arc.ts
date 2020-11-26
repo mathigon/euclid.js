@@ -66,9 +66,9 @@ export class Arc implements GeoShape {
     return this.start.rotate(this.angle * t, this.c);
   }
 
-  contains(_p: Point) {
-    // TODO Implement
-    return false;
+  contains(p: Point) {
+    // TODO Is there a better way to do this?
+    return p.equals(this.project(p));
   }
 
   // ---------------------------------------------------------------------------
