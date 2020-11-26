@@ -4,7 +4,7 @@
 // =============================================================================
 
 
-import {clamp} from '@mathigon/fermat';
+import {clamp, nearlyEquals} from '@mathigon/fermat';
 import {Line} from './line';
 import {Point, ORIGIN} from './point';
 import {GeoShape, rad, TransformMatrix, TWO_PI} from './utilities';
@@ -79,6 +79,7 @@ export class Arc implements GeoShape {
   }
 
   rotate(a: number, c = ORIGIN): this {
+    if (nearlyEquals(a, 0)) return this;
     return new (<any> this.constructor)(this.c.rotate(a, c),
         this.start.rotate(a, c), this.angle);
   }

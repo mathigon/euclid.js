@@ -150,6 +150,8 @@ export class Point implements GeoElement, SimplePoint {
 
   /** Rotates this point by a given angle (in radians) around c. */
   rotate(angle: number, c: SimplePoint = ORIGIN) {
+    if (nearlyEquals(angle, 0)) return this;
+
     const x0 = this.x - c.x;
     const y0 = this.y - c.y;
 

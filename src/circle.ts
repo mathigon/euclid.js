@@ -71,6 +71,7 @@ export class Circle implements GeoShape {
   }
 
   rotate(a: number, c = ORIGIN) {
+    if (nearlyEquals(a, 0)) return this;
     return new Circle(this.c.rotate(a, c), this.r);
   }
 

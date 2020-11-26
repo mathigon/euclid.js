@@ -112,6 +112,7 @@ export class Line implements GeoShape {
   }
 
   rotate(a: number, c = ORIGIN): this {
+    if (nearlyEquals(a, 0)) return this;
     return new (<any> this.constructor)(this.p1.rotate(a, c),
         this.p2.rotate(a, c));
   }

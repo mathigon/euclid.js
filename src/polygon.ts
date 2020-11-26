@@ -5,6 +5,7 @@
 
 
 import {toLinkedList, tabulate, last} from '@mathigon/core';
+import {nearlyEquals} from '@mathigon/fermat';
 import {Circle} from './circle';
 import {intersections} from './intersection';
 import {Line, Segment} from './line';
@@ -200,6 +201,7 @@ export class Polygon implements GeoShape {
   }
 
   rotate(a: number, center = ORIGIN): this {
+    if (nearlyEquals(a, 0)) return this;
     const points = this.points.map(p => p.rotate(a, center));
     return new (<any> this.constructor)(...points);
   }

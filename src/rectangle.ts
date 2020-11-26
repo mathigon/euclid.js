@@ -4,7 +4,7 @@
 // =============================================================================
 
 
-import {isBetween} from '@mathigon/fermat';
+import {isBetween, nearlyEquals} from '@mathigon/fermat';
 import {Line} from './line';
 import {ORIGIN, Point} from './point';
 import {Polygon} from './polygon';
@@ -18,15 +18,20 @@ export class Rectangle implements GeoShape {
   constructor(readonly p: Point, readonly w = 1, readonly h = w) {}
 
   /** Creates the smallest rectangle containing all given points. */
-  static aroundPoints(...points: Point[]) {
-    const xs = points.map(p => p.x);
-    const ys = points.map(p => p.y);
+  static aroundPoints(points: Iterable<Point>) {
+    let xMin = Infinity;
+    let xMax = -Infinity;
+    let yMin = Infinity;
+    let yMax = -Infinity;
 
-    const x = Math.min(...xs);
-    const w = Math.max(...xs) - x;
-    const y = Math.min(...ys);
-    const h = Math.max(...ys) - y;
-    return new Rectangle(new Point(x, y), w, h);
+    for (const p of points) {
+      xMin = xMin < p.x ? xMin : p.x;
+      xMax = xMax > p.x ? xMax : p.x;
+      yMin = yMin < p.y ? yMin : p.y;
+      yMax = yMax > p.y ? yMax : p.y;
+    }
+
+    return new Rectangle(new Point(xMin, yMin), xMax - xMin, yMax - yMin);
   }
 
   get center() {
@@ -63,6 +68,11 @@ export class Rectangle implements GeoShape {
     return new Polygon(this.p, b, c, d);
   }
 
+  collision(r: Rectangle) {
+    return (this.p.x < r.p.x + r.w && this.p.x + this.w > r.p.x &&
+            this.p.y < r.p.y + r.h && this.p.y + this.h > r.p.y);
+  }
+
   // ---------------------------------------------------------------------------
 
   contains(p: Point, tolerance?: number) {
@@ -93,6 +103,7 @@ export class Rectangle implements GeoShape {
   }
 
   rotate(a: number, c = ORIGIN) {
+    if (nearlyEquals(a, 0)) return this;
     return this.polygon.rotate(a, c);
   }
 

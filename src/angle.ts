@@ -87,6 +87,7 @@ export class Angle implements GeoShape {
   }
 
   rotate(a: number, c?: SimplePoint) {
+    if (nearlyEquals(a, 0)) return this;
     return new Angle(this.a.rotate(a, c), this.b.rotate(a, c), this.c.rotate(a, c));
   }
 
