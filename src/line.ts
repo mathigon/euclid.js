@@ -134,7 +134,8 @@ export class Line implements GeoShape {
   }
 
   equals(other: Line, tolerance?: number) {
-    if (other.type !== 'line') return false;
+    // Note: Checking line types breaks some applications in Mathigon textbooks.
+    // if (other.type !== 'line') return false;
     return this.contains(other.p1, tolerance) && this.contains(other.p2, tolerance);
   }
 }
