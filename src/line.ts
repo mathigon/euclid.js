@@ -161,7 +161,7 @@ export class Segment extends Line {
   readonly type = 'segment';
 
   contains(p: Point, tolerance?: number) {
-    if (!Line.prototype.contains.call(this, p)) return false;
+    if (!Line.prototype.contains.call(this, p, tolerance)) return false;
     if (nearlyEquals(this.p1.x, this.p2.x, tolerance)) {
       return isBetween(p.y, this.p1.y, this.p2.y);
     } else {
