@@ -86,6 +86,13 @@ export class Point implements GeoElement, SimplePoint {
     return rad(this, c);
   }
 
+  // Snap to the x or y values of another point
+  snap(p: Point, tolerance = 5) {
+    if (nearlyEquals(this.x, p.x, tolerance)) return new Point(p.x, this.y);
+    if (nearlyEquals(this.y, p.y, tolerance)) return new Point(this.x, p.y);
+    return this;
+  }
+
   /** Calculates the average of multiple points. */
   static average(...points: SimplePoint[]) {
     const x = total(points.map(p => p.x)) / points.length;
