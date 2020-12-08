@@ -27,6 +27,10 @@ export class Bounds {
     return isBetween(p.y, this.yMin, this.yMax);
   }
 
+  resize(dx: number, dy: number) {
+    return new Bounds(this.xMin, this.xMax + dx, this.yMin, this.yMax + dy);
+  }
+
   get dx() {
     return this.xMax - this.xMin;
   }
