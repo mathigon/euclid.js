@@ -54,4 +54,8 @@ export class Bounds {
   get center() {
     return new Point(this.xMin + this.dx / 2, this.yMin + this.dy / 2);
   }
+
+  get flip() {
+    return new Bounds(this.yMin, this.yMax, this.xMin, this.xMax);
+  }
 }
