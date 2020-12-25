@@ -18,11 +18,7 @@ export class Angle implements GeoShape {
   constructor(readonly a: Point, readonly b: Point, readonly c: Point) {}
 
   static fromDegrees(val: number) {
-    const radians = val * (Math.PI / 180);
-    const c = new Point(0, 0);
-    const p1 = new Point(1, 0);
-    const p2 = p1.rotate(radians, c);
-    return new Angle(p1, c, p2);
+    return Angle.fromRadians(val * (Math.PI / 180));
   }
 
   static fromRadians(val: number): Angle {
