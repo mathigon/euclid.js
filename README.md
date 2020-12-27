@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/mathigon/euclid.js.svg?branch=master)](https://travis-ci.org/mathigon/euclid.js)
 [![npm](https://img.shields.io/npm/v/@mathigon/euclid.svg)](https://www.npmjs.com/package/@mathigon/euclid)
 [![npm](https://img.shields.io/github/license/mathigon/euclid.js.svg)](https://github.com/mathigon/euclid.js/blob/master/LICENSE)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmathigon%2Feuclid.js.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmathigon%2Feuclid.js?ref=badge_shield)
 
 Euclid.ts is a Typescript library for 2D geometry. It contains classes for elements like points,
 lines, circles, and polygons, intersection detection, as well as SVG and Canvas drawing tools.
@@ -58,3 +59,6 @@ Contributor License Agreement](https://gist.github.com/plegner/5ad5b7be2948a4ad0
 
 Copyright © Mathigon ([dev@mathigon.org](mailto:dev@mathigon.org))  
 Released under the [MIT license](LICENSE)
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmathigon%2Feuclid.js.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmathigon%2Feuclid.js?ref=badge_large)
