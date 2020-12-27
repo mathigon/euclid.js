@@ -7,7 +7,7 @@
 import {nearlyEquals} from '@mathigon/fermat';
 import {Arc} from './arc';
 import {Line} from './line';
-import {Point} from './point';
+import {ORIGIN, Point} from './point';
 import {GeoShape, SimplePoint, TransformMatrix, TWO_PI} from './utilities';
 
 
@@ -22,10 +22,9 @@ export class Angle implements GeoShape {
   }
 
   static fromRadians(val: number): Angle {
-    const c = new Point(0, 0);
     const p1 = new Point(1, 0);
-    const p2 = p1.rotate(val, c);
-    return new Angle(p1, c, p2);
+    const p2 = p1.rotate(val);
+    return new Angle(p1, ORIGIN, p2);
   }
 
   /** The size, in radians, of this angle. */
