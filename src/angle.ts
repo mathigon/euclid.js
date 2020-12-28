@@ -11,6 +11,20 @@ import {ORIGIN, Point} from './point';
 import {GeoShape, SimplePoint, TransformMatrix, TWO_PI} from './utilities';
 
 
+const RAD_TO_DEG = 180 / Math.PI;
+const DEG_TO_RAD = Math.PI / 180;
+
+/** Convert angles in radians to degrees. */
+export function toDeg(n: number) {
+  return n * RAD_TO_DEG;
+}
+
+/** Convert angles in degrees to radians. */
+export function toRad(n: number) {
+  return n * DEG_TO_RAD;
+}
+
+
 /** A 2-dimensional angle class, defined by three points. */
 export class Angle implements GeoShape {
   readonly type = 'angle';
