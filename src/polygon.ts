@@ -125,6 +125,10 @@ export class Polygon implements GeoShape {
 
   /** Checks if two polygons p1 and p2 collide. */
   static collision(p1: Polygon, p2: Polygon) {
+    // Check if one of the vertices is in one of the polygons.
+    if (p1.points.some(q => p2.contains(q))) return true;
+    if (p2.points.some(q => p1.contains(q))) return true;
+
     // Check if any of the edges overlap.
     for (const e1 of p1.edges) {
       for (const e2 of p2.edges) {
@@ -132,8 +136,7 @@ export class Polygon implements GeoShape {
       }
     }
 
-    // Check if one of the vertices is in one of the polygons.
-    return p2.contains(p1.points[0]) || p1.contains(p2.points[0]);
+    return false;
   }
 
   /** Creates a regular polygon. */
