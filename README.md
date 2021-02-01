@@ -1,6 +1,6 @@
 # Euclid.ts
 
-[![Build Status](https://travis-ci.org/mathigon/euclid.js.svg?branch=master)](https://travis-ci.org/mathigon/euclid.js)
+[![Build Status](https://github.com/mathigon/euclid.js/workflows/CI%20Tests/badge.svg)](https://github.com/mathigon/euclid.js/actions?query=workflow%3A%22CI+Tests%22)
 [![npm](https://img.shields.io/npm/v/@mathigon/euclid.svg)](https://www.npmjs.com/package/@mathigon/euclid)
 [![npm](https://img.shields.io/github/license/mathigon/euclid.js.svg)](https://github.com/mathigon/euclid.js/blob/master/LICENSE)
 
