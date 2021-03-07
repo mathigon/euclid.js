@@ -4,7 +4,7 @@
 // =============================================================================
 
 
-import {toLinkedList, tabulate, last} from '@mathigon/core';
+import {tabulate, last} from '@mathigon/core';
 import {nearlyEquals} from '@mathigon/fermat';
 import {Circle} from './circle';
 import {intersections} from './intersection';
