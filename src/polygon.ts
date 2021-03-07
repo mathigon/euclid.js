@@ -86,41 +86,95 @@ export class Polygon implements GeoShape {
     return new (<any> this.constructor)(...points);
   }
 
-  /**
-   * The intersection of this and another polygon, calculated using the
-   * Weiler–Atherton clipping algorithm
-   */
-  intersect(polygon: Polygon) {
-    // TODO Support intersections with multiple disjoint overlapping areas.
-    // TODO Support segments intersecting at their endpoints
-    const points = [toLinkedList<Point>(this.oriented.points),
-      toLinkedList<Point>(polygon.oriented.points)];
+  /** Cut this polygon along a line, and return multiple parts. */
+  cut(line: Line) {
+    // TODO Fix bugs when one of the edges lies entirely on the cut line.
+    let edges: Segment[] = [];
+    const edgesOnLine: Segment[] = [];  // Starting point on the line
 
-    const max = this.points.length + polygon.points.length;
-    const result: Point[] = [];
+    for (const e of this.edges) {
+      const side1 = line.side(e.p1);
+      const side2 = line.side(e.p2);
 
-    let which = 0;
-    let active = points[which].find(p => polygon.contains(p.val))!;
-    if (!active) return undefined;  // No intersection
-
-    while (active.val !== result[0] && result.length < max) {
-      result.push(active.val);
-
-      const nextEdge = new Segment(active.val, active.next!.val);
-      active = active.next!;
-
-      for (const p of points[1 - which]) {
-        const testEdge = new Segment(p.val, p.next!.val);
-        const intersect = intersections(nextEdge, testEdge)[0];
-        if (intersect) {
-          which = 1 - which;  // Switch active polygon
-          active = {val: intersect, next: p.next};
-          break;
+      if (side1 && side2 && side1 !== side2) {
+        const int = intersections(e, line)[0];
+        edges.push(new Segment(e.p1, int));
+        const e2 = new Segment(int, e.p2);
+        e2.flag = side2;
+        edges.push(e2);
+        edgesOnLine.push(e2);
+      } else {
+        if (side1 === 0 && side2) {
+          edgesOnLine.push(e);
+          e.flag = side2;
         }
+        edges.push(e);
       }
     }
 
-    return new Polygon(...result);
+    if (edgesOnLine.length < 2) return [this];
+
+    // Sort edgesOnLine by their starting point along the cut line.
+    edgesOnLine.sort((u, v) => line.offset(u.p1) - line.offset(v.p1));
+
+    // Return all edges from index i0 to index i1.
+    const getEdges = (i0: number, i1: number) => {
+      const n = edges.length;
+      const results = [];
+      if (i1 < i0) i1 += n;
+      for (let i = i0; i <= i1; i++) results.push(edges[i % n]);
+      return results;
+    };
+
+    // Find the first edge after i0 that has a flag other than that of edge i0.
+    const traverseEdges = (i0: number) => {
+      const n = edges.length;
+      const startFlag = edges[i0].flag;
+      let i = i0;
+      while (true) {
+        i = (i + 1) % n;
+        if (edges[i].flag === startFlag) {
+          edges[i].flag = undefined;
+          edgesOnLine.splice(edgesOnLine.indexOf(edges[i]), 1);
+        }
+        if (i === i0 || edges[i].flag) return i;
+      }
+    };
+
+    const results: Segment[][] = [];
+    let dir = 0;
+
+    while (edgesOnLine.length >= 2) {
+      let e0 = edgesOnLine[0];
+      let e1 = edgesOnLine[1];
+      let i0 = edges.indexOf(e0);
+      let i1 = edges.indexOf(e1);
+      let solved = false;
+
+      if (traverseEdges(i0) === i1) {
+        solved = true;
+      } else {
+        [e0, e1] = [e1, e0];
+        [i0, i1] = [i1, i0];
+        if (traverseEdges(i0) === i1) solved = true;
+      }
+
+      if (solved) {
+        dir--;
+        results.push(getEdges(i0, i1));
+        edges = getEdges(i1, i0);
+        e0.flag = e1.flag = undefined;
+        edgesOnLine.splice(0, 2);
+        if (edgesOnLine.length < 2) results.push(edges);
+      } else {
+        dir++;
+        edgesOnLine.reverse();
+      }
+
+      if (dir > 1) break;
+    }
+
+    return results.map(r => new Polygon(...r.map(e => e.p1)));
   }
 
   /** Checks if two polygons p1 and p2 collide. */

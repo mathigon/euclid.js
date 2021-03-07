@@ -12,6 +12,7 @@ import {GeoShape, rad, SimplePoint, TransformMatrix} from './utilities';
 /** An infinite straight line that goes through two points. */
 export class Line implements GeoShape {
   readonly type: string = 'line';
+  flag?: number;
 
   constructor(readonly p1: Point, readonly p2: Point) {}
 
@@ -84,22 +85,32 @@ export class Line implements GeoShape {
 
   // ---------------------------------------------------------------------------
 
-  /** Projects a point `p` onto this line. */
-  project(p: SimplePoint) {
+  /** Signed distance along the line (opposite of .at()). */
+  offset(p: SimplePoint) {
     const a = Point.difference(this.p2, this.p1);
     const b = Point.difference(p, this.p1);
-    const proj = a.scale(Point.dot(a, b) / this.lengthSquared);
-    return Point.sum(this.p1, proj);
+    return Point.dot(a, b) / this.lengthSquared;
+  }
+
+  /** Projects a point `p` onto this line. */
+  project(p: SimplePoint) {
+    return this.at(this.offset(p));
+  }
+
+  /** Returns which side of this line a point p is on (or 0 on the line). */
+  side(p: SimplePoint, tolerance?: number) {
+    const a = Point.difference(this.p2, this.p1);
+    const b = Point.difference(p, this.p1);
+    const d = b.x * a.y - b.y * a.x;
+    return nearlyEquals(d, 0, tolerance) ? 0 : Math.sign(d);
   }
 
   /** Checks if a point p lies on this line. */
-  contains(p: Point, tolerance?: number) {
-    // det([[p.x, p.y, 1],[p1.x, p1.y, 1],[p2.x, ,p2.y 1]])
-    const det = p.x * (this.p1.y - this.p2.y) + this.p1.x * (this.p2.y - p.y) +
-                this.p2.x * (p.y - this.p1.y);
-    return nearlyEquals(det, 0, tolerance);
+  contains(p: SimplePoint, tolerance?: number) {
+    return this.side(p, tolerance) === 0;
   }
 
+  /** Gets the point at a specific offset along the line (opposite of .offset()). */
   at(t: number) {
     return Point.interpolate(this.p1, this.p2, t);
   }
