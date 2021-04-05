@@ -18,7 +18,7 @@ export class Rectangle implements GeoShape {
   constructor(readonly p: Point, readonly w = 1, readonly h = w) {}
 
   /** Creates the smallest rectangle containing all given points. */
-  static aroundPoints(points: Iterable<Point>) {
+  static aroundPoints(points: Iterable<SimplePoint>) {
     let xMin = Infinity;
     let xMax = -Infinity;
     let yMin = Infinity;
