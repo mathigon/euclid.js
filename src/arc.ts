@@ -5,6 +5,7 @@
 
 
 import {clamp, nearlyEquals} from '@mathigon/fermat';
+import {Angle} from './angle';
 import {Line} from './line';
 import {Point, ORIGIN} from './point';
 import {GeoShape, rad, TransformMatrix, TWO_PI} from './utilities';
@@ -111,4 +112,8 @@ export class Arc implements GeoShape {
 
 export class Sector extends Arc {
   readonly type = 'sector';
+
+  contains(p: Point) {
+    return Point.distance(p, this.c) <= this.radius && new Angle(this.start, this.c, p).rad <= this.angle;
+  }
 }
