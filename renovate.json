@@ -1,6 +1,6 @@
 {
   "extends": ["config:base"],
-  "schedule": ["before 5am on the first day of the month"],
+  "schedule": ["on the first day of the month"],
   "packageRules": [{
     "packagePatterns": ["eslint"],
     "groupName": "lint",
@@ -11,7 +11,7 @@
     "schedule": ["at any time"],
     "automerge": true
   }, {
-    "packagePatterns": ["ts-node", "^typescript"],
+    "packagePatterns": ["ts-node", "^typescript", "tslib"],
     "groupName": "typescript",
     "automerge": true
   }, {
