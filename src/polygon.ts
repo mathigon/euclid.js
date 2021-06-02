@@ -4,7 +4,7 @@
 // =============================================================================
 
 
-import {tabulate, last} from '@mathigon/core';
+import {tabulate, last, difference} from '@mathigon/core';
 import {nearlyEquals} from '@mathigon/fermat';
 import {Circle} from './circle';
 import {intersections} from './intersection';
@@ -282,9 +282,13 @@ export class Polygon implements GeoShape {
     return this.shift(p.x, p.y);
   }
 
-  equals(_other: Polygon) {
-    // TODO Implement
-    return false;
+  equals(other: Polygon) {
+    const thisPoints = this.points;
+    const otherPoints = other.points;
+    thisPoints.includes, otherPoints.includes = function(point) {
+      return this.some(thisP => thisP.equals(point));
+    };
+    return difference(thisPoints, otherPoints).length == 0;
   }
 }
 
