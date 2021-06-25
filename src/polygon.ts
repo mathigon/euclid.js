@@ -210,6 +210,35 @@ export class Polygon implements GeoShape {
     return new Polygon(...points);
   }
 
+  static convexHull(...points: Point[]) {
+    // https://algorithmist.com/wiki/Monotone_chain_convex_hull
+    if (points.length <= 3) return new Polygon(...points);
+
+    const sorted = points.sort((a, b) => a.x !== b.x ? a.x - b.x : a.y - b.y);
+    const sortedReverse = sorted.slice(0).reverse();
+
+    const upper: Point[] = [];
+    const lower: Point[] = [];
+
+    for (const [source, target] of [[sorted, upper], [sortedReverse, lower]]) {
+      for (const p of source) {
+        while (target.length >= 2) {
+          const p1 = target[target.length - 1];
+          const p2 = target[target.length - 2];
+          if ((p1.x - p2.x) * (p.y - p2.y) >= (p.x - p2.x) * (p1.y - p2.y)) {
+            target.pop();
+          } else {
+            break;
+          }
+        }
+        target.push(p);
+      }
+      target.pop();
+    }
+
+    return new Polygon(...upper.concat(lower));
+  }
+
   // ---------------------------------------------------------------------------
 
   /**

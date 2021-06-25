@@ -18,3 +18,15 @@ tape('length and circumference', (test) => {
 
   test.end();
 });
+
+tape('Convex Hull', (test) => {
+  const points = [[0, 0], [0, 1], [0, 2], [1, -1], [-1, -1]].map(([x, y]) => new Point(x, y));
+  const hull = Polygon.convexHull(...points);
+
+  test.deepEquals(hull.points.length, 3);
+  test.deepEquals(hull.points[0], points[4]);
+  test.deepEquals(hull.points[1], points[2]);
+  test.deepEquals(hull.points[2], points[3]);
+
+  test.end();
+});
