@@ -146,6 +146,19 @@ export class Point implements GeoElement, SimplePoint {
     return new Point(x, y);
   }
 
+  static equals(p1: SimplePoint, p2: SimplePoint, precision?: number) {
+    return nearlyEquals(p1.x, p2.x, precision) && nearlyEquals(p1.y, p2.y, precision);
+  }
+
+  /** Check if p1, p2 and p3 lie on a straight line. */
+  static colinear(p1: SimplePoint, p2: SimplePoint, p3: SimplePoint, tolerance?: number) {
+    const dx1 = p1.x - p2.x;
+    const dy1 = p1.y - p2.y;
+    const dx2 = p2.x - p3.x;
+    const dy2 = p2.y - p3.y;
+    return nearlyEquals(dx1 * dy2, dx2 * dy1, tolerance);
+  }
+
   // ---------------------------------------------------------------------------
 
   /** Transforms this point using a 2x3 matrix m. */
@@ -199,7 +212,7 @@ export class Point implements GeoElement, SimplePoint {
 
   equals(other: any, precision?: number) {
     // TODO Fix type signature for `other`
-    return nearlyEquals(this.x, other.x, precision) && nearlyEquals(this.y, other.y, precision);
+    return Point.equals(this, other, precision);
   }
 }
 
