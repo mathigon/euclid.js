@@ -33,7 +33,7 @@
   "devDependencies": {
     "@rollup/plugin-typescript": "8.2.1",
     "@types/tape": "4.13.0",
-    "rollup": "2.50.5",
+    "rollup": "2.52.4",
     "tape": "5.2.2",
     "ts-node": "10.0.0",
     "tslib": "2.2.0",
