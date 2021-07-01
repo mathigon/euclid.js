@@ -4,7 +4,7 @@
 // =============================================================================
 
 
-import {tabulate, last} from '@mathigon/core';
+import {tabulate, last, difference} from '@mathigon/core';
 import {nearlyEquals} from '@mathigon/fermat';
 import {difference, intersect, union} from './boolean';
 import {Circle} from './circle';
@@ -244,9 +244,16 @@ export class Polygon implements GeoShape {
     return this.shift(p.x, p.y);
   }
 
-  equals(_other: Polygon) {
-    // TODO Implement
-    return false;
+  equals(other: Polygon, precision?: number) {
+    if (this.points.length !== other.points.length) return;
+    
+    // Ensure the points are in the same order
+    const offset = other.points.find(p => this.points[0].equals(p, precision));
+    const otherPoints = [...other.points.slice(offset), ...other.points.slice(0, offset)];
+    
+    // TODO What if the points are in the opposite order? Need to .reverse() array
+    // TODO What if the other.points contains this.points[0] multiple times?
+    return otherPoints.every((p, i) => p.equals(this.points[i], precision));
   }
 }
 
