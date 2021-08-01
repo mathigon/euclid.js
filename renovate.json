@@ -22,9 +22,5 @@
     "packagePatterns": ["^rollup", "^@rollup"],
     "groupName": "rollup",
     "automerge": true
-  }, {
-    "updateTypes": ["patch", "pin", "digest"],
-    "groupName": "versions",
-    "automerge": true
   }]
 }
