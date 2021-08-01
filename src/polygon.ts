@@ -244,8 +244,19 @@ export class Polygon implements GeoShape {
     return this.shift(p.x, p.y);
   }
 
-  equals(_other: Polygon) {
-    // TODO Implement
+  equals(other: Polygon, tolerance?: number, oriented?: boolean) {
+    const n = this.points.length;
+    if (n !== other.points.length) return false;
+    const p1 = oriented ? this : this.oriented;
+    const p2 = oriented ? other : other.oriented;
+
+    // Check if all the points, match, but allow different offsets
+    for (let offset = 0; offset < n; ++offset) {
+      if (p1.points.every((p, i) => p.equals(p2.points[(i + offset) % n], tolerance))) {
+        return true;
+      }
+    }
+
     return false;
   }
 }
