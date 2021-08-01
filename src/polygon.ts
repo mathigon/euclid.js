@@ -4,7 +4,7 @@
 // =============================================================================
 
 
-import {tabulate, last, difference} from '@mathigon/core';
+import {tabulate, last} from '@mathigon/core';
 import {nearlyEquals} from '@mathigon/fermat';
 import {Circle} from './circle';
 import {intersections} from './intersection';
@@ -282,16 +282,20 @@ export class Polygon implements GeoShape {
     return this.shift(p.x, p.y);
   }
 
-  equals(other: Polygon, precision?: number) {
-    if (this.points.length !== other.points.length) return;
-    
-    // Ensure the points are in the same order
-    const offset = other.points.find(p => this.points[0].equals(p, precision));
-    const otherPoints = [...other.points.slice(offset), ...other.points.slice(0, offset)];
-    
-    // TODO What if the points are in the opposite order? Need to .reverse() array
-    // TODO What if the other.points contains this.points[0] multiple times?
-    return otherPoints.every((p, i) => p.equals(this.points[i], precision));
+  equals(other: Polygon, tolerance?: number, oriented?: boolean) {
+    const n = this.points.length;
+    if (n !== other.points.length) return false;
+    const p1 = oriented ? this : this.oriented;
+    const p2 = oriented ? other : other.oriented;
+
+    // Check if all the points, match, but allow different offsets
+    for (let offset = 0; offset < n; ++offset) {
+      if (p1.points.every((p, i) => p.equals(p2.points[(i + offset) % n], tolerance))) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }
 
