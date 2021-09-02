@@ -4,7 +4,7 @@
 // =============================================================================
 
 
-import {nearlyEquals, isBetween, clamp} from '@mathigon/fermat';
+import {clamp, isBetween, nearlyEquals} from '@mathigon/fermat';
 import {ORIGIN, Point} from './point';
 import {GeoShape, rad, SimplePoint, TransformMatrix} from './utilities';
 
@@ -58,7 +58,7 @@ export class Line implements GeoShape {
   /** The point representing the perpendicular vector of this line. */
   get perpendicularVector() {
     return new Point(this.p2.y - this.p1.y,
-        this.p1.x - this.p2.x).unitVector;
+      this.p1.x - this.p2.x).unitVector;
   }
 
   /** Finds the line parallel to this one, going though point p. */
@@ -119,13 +119,12 @@ export class Line implements GeoShape {
 
   transform(m: TransformMatrix): this {
     return new (<any> this.constructor)(this.p1.transform(m),
-        this.p2.transform(m));
+      this.p2.transform(m));
   }
 
   rotate(a: number, c = ORIGIN): this {
     if (nearlyEquals(a, 0)) return this;
-    return new (<any> this.constructor)(this.p1.rotate(a, c),
-        this.p2.rotate(a, c));
+    return new (<any> this.constructor)(this.p1.rotate(a, c), this.p2.rotate(a, c));
   }
 
   reflect(l: Line): this {

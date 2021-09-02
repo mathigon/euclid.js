@@ -5,9 +5,8 @@
 
 
 import {nearlyEquals} from '@mathigon/fermat';
-import * as tape from 'tape';
-import {Line} from '../src/line';
-import {Point} from '../src/point';
+import tape from 'tape';
+import {Line, Point} from '../src';
 
 
 tape('offset and projections', (test) => {

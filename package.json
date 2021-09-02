@@ -1,7 +1,10 @@
 {
   "name": "@mathigon/euclid",
-  "version": "0.6.12",
-  "description": "Euclidean geometry classes and tools for JavaScript.",
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://mathigon.io/euclid",
+  "repository": "mathigon/euclid.js",
+  "description": "Euclidean geometry classes and tools for JavaScript",
   "keywords": [
     "geometry",
     "intersections",
@@ -9,39 +12,36 @@
     "svg",
     "canvas"
   ],
-  "homepage": "https://mathigon.io/",
-  "license": "MIT",
-  "author": {
-    "name": "Philipp Legner",
-    "email": "dev@mathigon.org",
-    "url": "https://mathigon.org"
+  "engines": {
+    "node": ">=10"
   },
-  "main": "dist/euclid.cjs.js",
-  "module": "dist/euclid.esm.js",
-  "main:ts": "index.ts",
-  "repository": "mathigon/euclid.js",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
   "scripts": {
     "test": "ts-node node_modules/tape/bin/tape test/**/*.ts",
-    "prepublishOnly": "npm test && npm run lint && npm run build",
-    "build": "rollup --config",
+    "prepublishOnly": "npm test && npm run lint",
+    "prepare": "npm run build",
+    "cjs": "esbuild src/index.ts --outfile=dist/index.cjs.js --format=cjs --bundle --target=es2016 --sourcemap --external:@mathigon/core,@mathigon/fermat",
+    "esm": "esbuild src/index.ts --outfile=dist/index.esm.js --format=esm --bundle --target=es2016 --sourcemap --external:@mathigon/core,@mathigon/fermat",
+    "types": "tsc --project tsconfig-types.json",
+    "build": "npm run cjs && npm run esm && npm run types",
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {
-    "@mathigon/core": "^0.6.4",
-    "@mathigon/fermat": "^0.6.4"
+    "@mathigon/core": "1.0.0",
+    "@mathigon/fermat": "1.0.0"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "8.2.5",
     "@types/tape": "4.13.2",
-    "rollup": "2.56.3",
+    "@typescript-eslint/eslint-plugin": "4.30.0",
+    "@typescript-eslint/parser": "4.30.0",
+    "esbuild": "0.12.24",
+    "eslint": "7.32.0",
+    "eslint-plugin-import": "2.24.2",
     "tape": "5.3.1",
     "ts-node": "10.2.1",
     "tslib": "2.3.1",
-    "typescript": "4.4.2",
-    "@typescript-eslint/eslint-plugin": "4.30.0",
-    "@typescript-eslint/parser": "4.30.0",
-    "eslint": "7.32.0",
-    "eslint-config-google": "0.14.0",
-    "eslint-plugin-import": "2.24.2"
+    "typescript": "4.4.2"
   }
 }

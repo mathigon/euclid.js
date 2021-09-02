@@ -7,7 +7,7 @@
 import {clamp, nearlyEquals} from '@mathigon/fermat';
 import {Angle} from './angle';
 import {Line} from './line';
-import {Point, ORIGIN} from './point';
+import {ORIGIN, Point} from './point';
 import {GeoShape, rad, TransformMatrix, TWO_PI} from './utilities';
 
 
@@ -32,8 +32,7 @@ export class Arc implements GeoShape {
   }
 
   contract(p: number): this {
-    return new (<any> this.constructor)(this.c, this.at(p / 2),
-        this.angle * (1 - p));
+    return new (<any> this.constructor)(this.c, this.at(p / 2), this.angle * (1 - p));
   }
 
   get minor(): this {
@@ -76,28 +75,28 @@ export class Arc implements GeoShape {
 
   transform(m: TransformMatrix): this {
     return new (<any> this.constructor)(this.c.transform(m),
-        this.start.transform(m), this.angle);
+      this.start.transform(m), this.angle);
   }
 
   rotate(a: number, c = ORIGIN): this {
     if (nearlyEquals(a, 0)) return this;
     return new (<any> this.constructor)(this.c.rotate(a, c),
-        this.start.rotate(a, c), this.angle);
+      this.start.rotate(a, c), this.angle);
   }
 
   reflect(l: Line): this {
     return new (<any> this.constructor)(this.c.reflect(l),
-        this.start.reflect(l), this.angle);
+      this.start.reflect(l), this.angle);
   }
 
   scale(sx: number, sy = sx): this {
     return new (<any> this.constructor)(this.c.scale(sx, sy),
-        this.start.scale(sx, sy), this.angle);
+      this.start.scale(sx, sy), this.angle);
   }
 
   shift(x: number, y = x): this {
     return new (<any> this.constructor)(this.c.shift(x, y),
-        this.start.shift(x, y), this.angle);
+      this.start.shift(x, y), this.angle);
   }
 
   translate(p: Point) {

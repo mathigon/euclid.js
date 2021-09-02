@@ -4,9 +4,9 @@
 // =============================================================================
 
 
-import * as tape from 'tape';
-import {intersect, union, difference, xor} from '../src/boolean';
-import {Point} from '../src/point';
+import tape from 'tape';
+import {difference, intersect, union, xor} from '../src/boolean';
+import {Point} from '../src';
 
 
 const poly = (...p: number[][]) => p.map(q => new Point(q[0], q[1]));
@@ -42,7 +42,7 @@ tape('compound polygons', (test) => {
   test.deepEquals(r, [
     [[50, 50], [110, 50], [110, 110]],
     [[178, 80], [130, 50], [130, 130], [150, 150]],
-    [[178, 80], [190, 50], [260, 50], [260, 131.25]],
+    [[178, 80], [190, 50], [260, 50], [260, 131.25]]
   ]);
 
   test.end();

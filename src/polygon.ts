@@ -4,7 +4,7 @@
 // =============================================================================
 
 
-import {tabulate, last} from '@mathigon/core';
+import {last, tabulate} from '@mathigon/core';
 import {nearlyEquals} from '@mathigon/fermat';
 import {difference, intersect, union} from './boolean';
 import {Circle} from './circle';
@@ -139,7 +139,7 @@ export class Polygon implements GeoShape {
   static interpolate(p1: Polygon, p2: Polygon, t = 0.5) {
     // TODO support interpolating polygons with different numbers of points
     const points = p1.points.map(
-        (p, i) => Point.interpolate(p, p2.points[i], t));
+      (p, i) => Point.interpolate(p, p2.points[i], t));
     return new Polygon(...points);
   }
 

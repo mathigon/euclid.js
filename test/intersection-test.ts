@@ -4,12 +4,8 @@
 // =============================================================================
 
 
-import * as tape from 'tape';
-import {Circle} from '../src/circle';
-import {intersections} from '../src/intersection';
-import {Line, Segment} from '../src/line';
-import {Point} from '../src/point';
-import {Polygon} from '../src/polygon';
+import tape from 'tape';
+import {Circle, intersections, Line, Point, Polygon, Segment} from '../src';
 
 
 tape('segment-segment intersection', (test) => {

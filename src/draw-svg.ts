@@ -37,7 +37,7 @@ function drawArc(a: Point, b: Point, c: Point) {
   const orient = b.x * (c.y - a.y) + a.x * (b.y - c.y) + c.x * (a.y - b.y);
   const sweep = (orient > 0) ? 1 : 0;
   const size = Point.distance(b, a);
-  return [a.x, a.y + 'A' + size, size, 0, sweep, 1, c.x, c.y].join(',');
+  return [a.x, `${a.y}A${size}`, size, 0, sweep, 1, c.x, c.y].join(',');
 }
 
 export function angleSize(angle: Angle, options: SVGDrawingOptions = {}) {
@@ -72,7 +72,7 @@ function drawAngle(angle: Angle, options: SVGDrawingOptions = {}) {
 }
 
 function drawPath(...points: Point[]) {
-  return 'M' + points.map(p => p.x + ',' + p.y).join('L');
+  return `M${points.map(p => `${p.x},${p.y}`).join('L')}`;
 }
 
 
@@ -92,10 +92,10 @@ function drawLineMark(x: Line, type: LineMark) {
              drawPath(m.add(n.inverse).add(p), m.add(n.inverse).add(p.inverse));
     case 'arrow':
       return drawPath(m.add(n.inverse).add(p), m.add(n),
-          m.add(n.inverse).add(p.inverse));
+        m.add(n.inverse).add(p.inverse));
     case 'arrow2':
       return drawPath(m.add(n.scale(-2)).add(p), m,
-          m.add(n.scale(-2)).add(p.inverse)) +
+        m.add(n.scale(-2)).add(p.inverse)) +
              drawPath(m.add(p), m.add(n.scale(2)), m.add(p.inverse));
     default:
       return '';
@@ -176,7 +176,7 @@ export function drawSVG(obj: GeoElement, options: SVGDrawingOptions = {}) {
   }
 
   if (isArc(obj)) {
-    let path = 'M' + drawArc(obj.start, obj.c, obj.end);
+    let path = `M${drawArc(obj.start, obj.c, obj.end)}`;
     if (options.arrows) path += drawArcArrows(obj, options.arrows);
     return path;
   }
@@ -190,11 +190,11 @@ export function drawSVG(obj: GeoElement, options: SVGDrawingOptions = {}) {
   }
 
   if (isPolygon(obj)) {
-    return drawPath(...obj.points) + 'Z';
+    return `${drawPath(...obj.points)}Z`;
   }
 
   if (isRectangle(obj)) {
-    return drawPath(...obj.polygon.points) + 'Z';
+    return `${drawPath(...obj.polygon.points)}Z`;
   }
 
   return '';

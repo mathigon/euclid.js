@@ -4,7 +4,7 @@
 // =============================================================================
 
 
-/// <reference lib="dom" />
+// / <reference lib="dom" />
 import {isCircle, isPolygon, isPolyline, isSegment} from './types';
 import {GeoElement, TWO_PI} from './utilities';
 
@@ -23,7 +23,7 @@ type CanvasLineJoin = 'bevel' | 'miter' | 'round';
 
 
 export function drawCanvas(ctx: CanvasRenderingContext2D, obj: GeoElement,
-    options: CanvasDrawingOptions = {}) {
+  options: CanvasDrawingOptions = {}) {
   if (options.fill) ctx.fillStyle = options.fill;
   if (options.opacity) ctx.globalAlpha = options.opacity;
 

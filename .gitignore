@@ -26,5 +26,4 @@ nbproject
 
 # Folders to ignore
 node_modules
-ts_build
 dist

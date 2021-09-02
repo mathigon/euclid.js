@@ -1,17 +1,21 @@
 {
   "compilerOptions": {
+    "lib": ["esnext", "dom"],
     "target": "es2016",
-    "lib": [
-      "es2016"
-    ],
-    "moduleResolution": "Node",
+    "moduleResolution": "node",
+    "importHelpers": true,
     "strict": true,
     "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "strictFunctionTypes": true,
     "strictPropertyInitialization": true,
-    "noImplicitThis": true
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true
   },
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

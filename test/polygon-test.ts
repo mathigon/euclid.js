@@ -4,10 +4,8 @@
 // =============================================================================
 
 
-import * as tape from 'tape';
-import {Line} from '../src/line';
-import {Point} from '../src/point';
-import {Polygon, Polyline} from '../src/polygon';
+import tape from 'tape';
+import {Line, Point, Polygon, Polyline} from '../src';
 
 
 const poly = (...p: number[][]) => new Polygon(...p.map(q => new Point(q[0], q[1])));

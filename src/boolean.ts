@@ -162,7 +162,7 @@ class LinkedList<T> {
         prev.next = node;
         if (here) here.prev = node;
         return node;
-      },
+      }
     };
   }
 
@@ -385,7 +385,7 @@ function calculate(eventRoot: LinkedList<Event>, selfIntersection: boolean) {
       }
 
       // Insert the status and remember it for later removal
-      ev.other.status = surrounding.insert(LinkedList.node({ev: ev}));
+      ev.other.status = surrounding.insert(LinkedList.node({ev}));
 
     } else {
       const st = ev.status;
@@ -580,7 +580,7 @@ function select(segments: Segment[], selection: number[]) {
       result.push({
         start: seg.start,
         end: seg.end,
-        myFill: {above: selection[index] === 1, below: selection[index] === 2},
+        myFill: {above: selection[index] === 1, below: selection[index] === 2}
       });
     }
   }

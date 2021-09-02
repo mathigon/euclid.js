@@ -5,7 +5,7 @@
 
 
 import {flatten} from '@mathigon/core';
-import {subsets, nearlyEquals, isBetween, square} from '@mathigon/fermat';
+import {isBetween, nearlyEquals, square, subsets} from '@mathigon/fermat';
 import {Circle} from './circle';
 import {Line, Ray, Segment} from './line';
 import {Point} from './point';
