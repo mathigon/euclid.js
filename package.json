@@ -1,6 +1,6 @@
 {
   "name": "@mathigon/euclid",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "homepage": "https://mathigon.io/euclid",
   "repository": "mathigon/euclid.js",
@@ -22,15 +22,15 @@
     "test": "ts-node node_modules/tape/bin/tape test/**/*.ts",
     "prepublishOnly": "npm test && npm run lint",
     "prepare": "npm run build",
-    "cjs": "esbuild src/index.ts --outfile=dist/index.cjs.js --format=cjs --bundle --target=es2016 --sourcemap --external:@mathigon/core,@mathigon/fermat",
-    "esm": "esbuild src/index.ts --outfile=dist/index.esm.js --format=esm --bundle --target=es2016 --sourcemap --external:@mathigon/core,@mathigon/fermat",
+    "cjs": "esbuild src/index.ts --outfile=dist/index.cjs.js --format=cjs --bundle --target=es2016 --sourcemap --external:@mathigon/core --external:@mathigon/fermat",
+    "esm": "esbuild src/index.ts --outfile=dist/index.esm.js --format=esm --bundle --target=es2016 --sourcemap --external:@mathigon/core --external:@mathigon/fermat",
     "types": "tsc --project tsconfig-types.json",
     "build": "npm run cjs && npm run esm && npm run types",
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {
-    "@mathigon/core": "1.0.1",
-    "@mathigon/fermat": "1.0.1"
+    "@mathigon/core": "1.0.2",
+    "@mathigon/fermat": "1.0.2"
   },
   "devDependencies": {
     "@types/tape": "4.13.2",
