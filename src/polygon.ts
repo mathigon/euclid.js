@@ -101,11 +101,6 @@ export class Polygon implements GeoShape {
     return [...side1, ...side2].map(p => new Polygon(...p));
   }
 
-  /** Center this polygon on a given point or {x: 0, y: 0} */
-  center(on = new Point(0, 0)) {
-    return this.translate(on.subtract(this.centroid));
-  }
-
   /** Checks if two polygons p1 and p2 collide. */
   static collision(p1: Polygon, p2: Polygon) {
     // Check if one of the vertices is in one of the polygons.
@@ -216,6 +211,11 @@ export class Polygon implements GeoShape {
     }
 
     return q || this.points[0];
+  }
+
+  /** Center this polygon on a given point or the origin */
+  centerAt(on = ORIGIN) {
+    return this.translate(on.subtract(this.centroid));
   }
 
   // ---------------------------------------------------------------------------
