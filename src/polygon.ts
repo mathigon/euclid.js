@@ -213,6 +213,11 @@ export class Polygon implements GeoShape {
     return q || this.points[0];
   }
 
+  /** Center this polygon on a given point or the origin */
+  centerAt(on = ORIGIN) {
+    return this.translate(on.subtract(this.centroid));
+  }
+
   // ---------------------------------------------------------------------------
 
   transform(m: TransformMatrix): this {
