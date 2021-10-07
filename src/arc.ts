@@ -78,6 +78,7 @@ export class Arc implements GeoShape {
       this.start.transform(m), this.angle);
   }
 
+  /** Rotates this arc by a given angle (in radians), optionally around point `c`. */
   rotate(a: number, c = ORIGIN): this {
     if (nearlyEquals(a, 0)) return this;
     return new (<any> this.constructor)(this.c.rotate(a, c),

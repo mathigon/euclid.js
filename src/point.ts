@@ -168,7 +168,7 @@ export class Point implements GeoElement, SimplePoint {
     return new Point(x, y);
   }
 
-  /** Rotates this point by a given angle (in radians) around c. */
+  /** Rotates this point by a given angle (in radians) around point `c`. */
   rotate(angle: number, c: SimplePoint = ORIGIN) {
     if (nearlyEquals(angle, 0)) return this;
 

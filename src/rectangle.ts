@@ -102,6 +102,7 @@ export class Rectangle implements GeoShape {
     return this.polygon.transform(m);
   }
 
+  /** Rotates this rectangle by a given angle (in radians), optionally around point `c`. */
   rotate(a: number, c = ORIGIN) {
     if (nearlyEquals(a, 0)) return this;
     return this.polygon.rotate(a, c);

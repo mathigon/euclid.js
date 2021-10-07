@@ -224,6 +224,7 @@ export class Polygon implements GeoShape {
     return new (<any> this.constructor)(...this.points.map(p => p.transform(m)));
   }
 
+  /** Rotates this polygon by a given angle (in radians), optionally around point `center`. */
   rotate(a: number, center = ORIGIN): this {
     if (nearlyEquals(a, 0)) return this;
     const points = this.points.map(p => p.rotate(a, center));
