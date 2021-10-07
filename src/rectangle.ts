@@ -5,6 +5,7 @@
 
 
 import {isBetween, nearlyEquals} from '@mathigon/fermat';
+import {toRad} from './angle';
 import {Line} from './line';
 import {ORIGIN, Point} from './point';
 import {Polygon} from './polygon';
@@ -102,10 +103,20 @@ export class Rectangle implements GeoShape {
     return this.polygon.transform(m);
   }
 
-  /** Rotates this rectangle by a given angle (in radians), optionally around point `c`. */
-  rotate(a: number, c = ORIGIN) {
-    if (nearlyEquals(a, 0)) return this;
-    return this.polygon.rotate(a, c);
+  /** Rotates this rectangle by a given angle (in radians), optionally around point `center`. */
+  rotate(angle: number, center?: SimplePoint) {
+    return this.rotateRad(angle, center);
+  }
+
+  /** Rotates this rectangle by a given angle (in radians), optionally around point `center`. */
+  rotateRad(radians: number, center: SimplePoint = ORIGIN) {
+    if (nearlyEquals(radians, 0)) return this;
+    return this.polygon.rotate(radians, center);
+  }
+
+  /** Rotates this rectangle by a given angle (in degrees), optionally around point `center`. */
+  rotateDeg(degrees: number, center?: SimplePoint) {
+    return this.rotateRad(toRad(degrees), center);
   }
 
   reflect(l: Line) {

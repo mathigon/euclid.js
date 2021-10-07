@@ -110,9 +110,20 @@ export class Angle implements GeoShape {
     return new Angle(this.a.transform(m), this.b.transform(m), this.c.transform(m));
   }
 
-  rotate(a: number, c?: SimplePoint) {
-    if (nearlyEquals(a, 0)) return this;
-    return new Angle(this.a.rotate(a, c), this.b.rotate(a, c), this.c.rotate(a, c));
+  /** Rotates this angle by a given amount (in radians) */
+  rotate(angle: number, _center?: SimplePoint) {
+    return this.rotateRad(angle);
+  }
+
+  /** Rotates this angle by a given amount (in radians) */
+  rotateRad(radians: number, _center?: SimplePoint) {
+    if (nearlyEquals(radians, 0)) return this;
+    return new Angle(this.a.rotate(radians, this.b), this.b.rotate(radians, this.b), this.c.rotate(radians, this.b));
+  }
+
+  /** Rotates this angle by a given amount (in degrees) */
+  rotateDeg(degrees: number, _center?: SimplePoint) {
+    return this.rotateRad(toRad(degrees));
   }
 
   reflect(l: Line) {

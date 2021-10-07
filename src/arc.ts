@@ -5,10 +5,10 @@
 
 
 import {clamp, nearlyEquals} from '@mathigon/fermat';
-import {Angle} from './angle';
+import {Angle, toRad} from './angle';
 import {Line} from './line';
 import {ORIGIN, Point} from './point';
-import {GeoShape, rad, TransformMatrix, TWO_PI} from './utilities';
+import {GeoShape, rad, SimplePoint, TransformMatrix, TWO_PI} from './utilities';
 
 
 /** An arc segment of a circle, with given center, start point and angle. */
@@ -78,11 +78,21 @@ export class Arc implements GeoShape {
       this.start.transform(m), this.angle);
   }
 
-  /** Rotates this arc by a given angle (in radians), optionally around point `c`. */
-  rotate(a: number, c = ORIGIN): this {
-    if (nearlyEquals(a, 0)) return this;
-    return new (<any> this.constructor)(this.c.rotate(a, c),
-      this.start.rotate(a, c), this.angle);
+  /** Rotates this arc by a given angle (in radians), optionally around point `center`. */
+  rotate(angle: number, center?: SimplePoint) {
+    return this.rotateRad(angle, center);
+  }
+
+  /** Rotates this arc by a given angle (in radians), optionally around point `center`. */
+  rotateRad(radians: number, center: SimplePoint = ORIGIN) {
+    if (nearlyEquals(radians, 0)) return this;
+    return new (<any> this.constructor)(this.c.rotate(radians, center),
+      this.start.rotate(radians, center), this.angle);
+  }
+
+  /** Rotates this arc by a given angle (in degrees), optionally around point `center`. */
+  rotateDeg(degrees: number, center?: SimplePoint) {
+    return this.rotateRad(toRad(degrees), center);
   }
 
   reflect(l: Line): this {

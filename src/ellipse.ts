@@ -5,10 +5,10 @@
 
 
 import {quadratic} from '@mathigon/fermat';
-import {Angle} from './angle';
+import {Angle, toRad} from './angle';
 import {Line} from './line';
 import {ORIGIN, Point} from './point';
-import {GeoShape, TransformMatrix, TWO_PI} from './utilities';
+import {GeoShape, SimplePoint, TransformMatrix, TWO_PI} from './utilities';
 
 
 export class Ellipse implements GeoShape {
@@ -82,9 +82,17 @@ export class Ellipse implements GeoShape {
     return this;
   }
 
-  rotate(_a: number, _c = ORIGIN): this {
+  rotate(angle: number, center?: SimplePoint): this {
+    return this.rotateRad(angle, center);
+  }
+
+  rotateRad(_radians: number, _center: SimplePoint = ORIGIN) {
     // TODO Implement
     return this;
+  }
+
+  rotateDeg(degrees: number, center?: SimplePoint) {
+    return this.rotateRad(toRad(degrees), center);
   }
 
   reflect(_l: Line): this {

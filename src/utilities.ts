@@ -17,6 +17,8 @@ export interface GeoElement {
   type: string;
   transform(matrix: TransformMatrix): GeoElement;
   rotate(angle: number, center?: SimplePoint): GeoElement;
+  rotateRad(angle: number, center?: SimplePoint): GeoElement;
+  rotateDeg(angle: number, center?: SimplePoint): GeoElement;
   reflect(l: Line): GeoElement;
   scale(sx: number, sy?: number): GeoElement;
   shift(x: number, y?: number): GeoElement;
@@ -30,6 +32,8 @@ export interface GeoShape extends GeoElement {
   at(t: number): Point;
 
   rotate(angle: number, center?: SimplePoint): GeoShape;
+  rotateRad(angle: number, center?: SimplePoint): GeoShape;
+  rotateDeg(angle: number, center?: SimplePoint): GeoShape;
   reflect(l: Line): GeoShape;
   scale(sx: number, sy?: number): GeoShape;
   shift(x: number, y?: number): GeoShape;

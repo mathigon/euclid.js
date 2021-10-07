@@ -6,12 +6,13 @@
 
 import {last, tabulate} from '@mathigon/core';
 import {nearlyEquals} from '@mathigon/fermat';
+import {toRad} from './angle';
 import {difference, intersect, union} from './boolean';
 import {Circle} from './circle';
 import {intersections} from './intersection';
 import {Line, Segment} from './line';
 import {ORIGIN, Point} from './point';
-import {GeoShape, TransformMatrix, TWO_PI} from './utilities';
+import {GeoShape, SimplePoint, TransformMatrix, TWO_PI} from './utilities';
 
 
 /** A polygon defined by its vertex points. */
@@ -225,10 +226,20 @@ export class Polygon implements GeoShape {
   }
 
   /** Rotates this polygon by a given angle (in radians), optionally around point `center`. */
-  rotate(a: number, center = ORIGIN): this {
-    if (nearlyEquals(a, 0)) return this;
-    const points = this.points.map(p => p.rotate(a, center));
+  rotate(angle: number, center?: SimplePoint) {
+    return this.rotateRad(angle, center);
+  }
+
+  /** Rotates this polygon by a given angle (in radians), optionally around point `center`. */
+  rotateRad(radians: number, center: SimplePoint = ORIGIN) {
+    if (nearlyEquals(radians, 0)) return this;
+    const points = this.points.map(p => p.rotate(radians, center));
     return new (<any> this.constructor)(...points);
+  }
+
+  /** Rotates this polygon by a given angle (in degrees), optionally around point `center`. */
+  rotateDeg(degrees: number, center?: SimplePoint) {
+    return this.rotateRad(toRad(degrees), center);
   }
 
   reflect(line: Line): this {

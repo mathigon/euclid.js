@@ -5,6 +5,7 @@
 
 
 import {clamp, isBetween, nearlyEquals} from '@mathigon/fermat';
+import {toRad} from './angle';
 import {ORIGIN, Point} from './point';
 import {GeoShape, rad, SimplePoint, TransformMatrix} from './utilities';
 
@@ -122,10 +123,20 @@ export class Line implements GeoShape {
       this.p2.transform(m));
   }
 
-  /** Rotates this line by a given angle (in radians), optionally around point `c`. */
-  rotate(a: number, c = ORIGIN): this {
-    if (nearlyEquals(a, 0)) return this;
-    return new (<any> this.constructor)(this.p1.rotate(a, c), this.p2.rotate(a, c));
+  /** Rotates this line by a given angle (in radians), optionally around point `center`. */
+  rotate(angle: number, center?: SimplePoint) {
+    return this.rotateRad(angle, center);
+  }
+
+  /** Rotates this line by a given angle (in radians), optionally around point `center`. */
+  rotateRad(radians: number, center: SimplePoint = ORIGIN) {
+    if (nearlyEquals(radians, 0)) return this;
+    return new (<any> this.constructor)(this.p1.rotate(radians, center), this.p2.rotate(radians, center));
+  }
+
+  /** Rotates this line by a given angle (in degrees), optionally around point `center`. */
+  rotateDeg(degrees: number, center?: SimplePoint) {
+    return this.rotateRad(toRad(degrees), center);
   }
 
   reflect(l: Line): this {

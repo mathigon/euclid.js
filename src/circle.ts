@@ -5,11 +5,12 @@
 
 
 import {nearlyEquals} from '@mathigon/fermat';
+import {toRad} from './angle';
 import {Arc} from './arc';
 import {Line} from './line';
 import {ORIGIN, Point} from './point';
 import {Rectangle} from './rectangle';
-import {GeoShape, TransformMatrix, TWO_PI} from './utilities';
+import {GeoShape, SimplePoint, TransformMatrix, TWO_PI} from './utilities';
 
 
 /** A circle with a given center and radius. */
@@ -70,9 +71,20 @@ export class Circle implements GeoShape {
     return new Circle(this.c.transform(m), this.r * scale / 2);
   }
 
-  rotate(a: number, c = ORIGIN) {
-    if (nearlyEquals(a, 0)) return this;
-    return new Circle(this.c.rotate(a, c), this.r);
+  /** Rotates this circle by a given angle (in radians), optionally around point `center`. */
+  rotate(angle: number, center?: SimplePoint) {
+    return this.rotateRad(angle, center);
+  }
+
+  /** Rotates this circle by a given angle (in radians), optionally around point `center`. */
+  rotateRad(radians: number, center: SimplePoint = ORIGIN) {
+    if (nearlyEquals(radians, 0)) return this;
+    return new Circle(this.c.rotate(radians, center), this.r);
+  }
+
+  /** Rotates this circle by a given angle (in degrees), optionally around point `center`. */
+  rotateDeg(degrees: number, center?: SimplePoint) {
+    return this.rotateRad(toRad(degrees), center);
   }
 
   reflect(l: Line) {

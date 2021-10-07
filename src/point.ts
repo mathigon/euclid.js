@@ -6,6 +6,7 @@
 
 import {total} from '@mathigon/core';
 import {clamp, lerp, nearlyEquals, Random, roundTo, square} from '@mathigon/fermat';
+import {toRad} from './angle';
 import {Bounds} from './bounds';
 import {Line} from './line';
 import {GeoElement, rad, SimplePoint, TransformMatrix} from './utilities';
@@ -168,19 +169,29 @@ export class Point implements GeoElement, SimplePoint {
     return new Point(x, y);
   }
 
-  /** Rotates this point by a given angle (in radians) around point `c`. */
-  rotate(angle: number, c: SimplePoint = ORIGIN) {
-    if (nearlyEquals(angle, 0)) return this;
+  /** Rotates this point by a given angle (in radians) around point `center`. */
+  rotate(angle: number, center?: SimplePoint) {
+    return this.rotateRad(angle, center);
+  }
 
-    const x0 = this.x - c.x;
-    const y0 = this.y - c.y;
+  /** Rotates this point by a given angle (in radians) around point `center`. */
+  rotateRad(radians: number, center: SimplePoint = ORIGIN) {
+    if (nearlyEquals(radians, 0)) return this;
 
-    const cos = Math.cos(angle);
-    const sin = Math.sin(angle);
+    const x0 = this.x - center.x;
+    const y0 = this.y - center.y;
 
-    const x = x0 * cos - y0 * sin + c.x;
-    const y = x0 * sin + y0 * cos + c.y;
+    const cos = Math.cos(radians);
+    const sin = Math.sin(radians);
+
+    const x = x0 * cos - y0 * sin + center.x;
+    const y = x0 * sin + y0 * cos + center.y;
     return new Point(x, y);
+  }
+
+  /** Rotates this point by a given angle (in degrees) around point `center`. */
+  rotateDeg(degrees: number, center?: SimplePoint) {
+    return this.rotateRad(toRad(degrees), center);
   }
 
   /** Reflects this point across a line l. */
