@@ -94,4 +94,8 @@ export class Circle implements GeoShape {
   equals(other: Circle, tolerance?: number) {
     return nearlyEquals(this.r, other.r, tolerance) && this.c.equals(other.c, tolerance);
   }
+
+  toString() {
+    return `Circle(c: ${this.c}, r: ${this.r})`;
+  }
 }
