@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@mathigon/core": "1.0.3",
-    "@mathigon/fermat": "1.0.3"
+    "@mathigon/fermat": "1.0.4"
   },
   "devDependencies": {
     "@types/tape": "4.13.2",
