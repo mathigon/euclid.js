@@ -149,6 +149,10 @@ export class Line implements GeoShape {
     // if (other.type !== 'line') return false;
     return this.contains(other.p1, tolerance) && this.contains(other.p2, tolerance);
   }
+
+  toString() {
+    return `Line(p1: ${this.p1}, p2: ${this.p2})`;
+  }
 }
 
 
@@ -163,6 +167,10 @@ export class Ray extends Line {
   equals(other: Ray, tolerance?: number) {
     if (other.type !== 'ray') return false;
     return this.p1.equals(other.p1, tolerance) && this.contains(other.p2, tolerance);
+  }
+
+  toString() {
+    return `Ray(p1: ${this.p1}, p2: ${this.p2})`;
   }
 }
 
@@ -203,5 +211,9 @@ export class Segment extends Line {
 
     return (this.p1.equals(other.p1, tolerance) && this.p2.equals(other.p2, tolerance)) ||
            (!oriented && this.p1.equals(other.p2, tolerance) && this.p2.equals(other.p1, tolerance));
+  }
+
+  toString() {
+    return `Segment(p1: ${this.p1}, p2: ${this.p2})`;
   }
 }

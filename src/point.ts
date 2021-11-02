@@ -214,6 +214,10 @@ export class Point implements GeoElement, SimplePoint {
     // TODO Fix type signature for `other`
     return Point.equals(this, other, precision);
   }
+
+  toString() {
+    return `Point(x: ${this.x}, y: ${this.y})`;
+  }
 }
 
 export const ORIGIN = new Point(0, 0);

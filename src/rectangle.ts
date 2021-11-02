@@ -128,4 +128,8 @@ export class Rectangle implements GeoShape {
     // TODO Implement
     return false;
   }
+
+  toString() {
+    return `Rectangle(p: ${this.p}, w: ${this.w}, h: ${this.h})`;
+  }
 }
