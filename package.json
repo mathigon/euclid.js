@@ -35,7 +35,7 @@
     "@types/tape": "4.13.2",
     "@typescript-eslint/eslint-plugin": "4.33.0",
     "@typescript-eslint/parser": "4.33.0",
-    "esbuild": "0.13.3",
+    "esbuild": "0.13.12",
     "eslint": "7.32.0",
     "eslint-plugin-import": "2.25.2",
     "tape": "5.3.1",
