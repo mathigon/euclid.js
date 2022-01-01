@@ -1,6 +1,6 @@
 {
   "name": "@mathigon/euclid",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "license": "MIT",
   "homepage": "https://mathigon.io/euclid",
   "repository": "mathigon/euclid.js",
@@ -13,7 +13,7 @@
     "canvas"
   ],
   "engines": {
-    "node": ">=10"
+    "node": ">=14"
   },
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -28,8 +28,8 @@
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {
-    "@mathigon/core": "1.0.5",
-    "@mathigon/fermat": "1.0.6"
+    "@mathigon/core": "1.0.6",
+    "@mathigon/fermat": "1.0.7"
   },
   "devDependencies": {
     "@types/tape": "4.13.2",
