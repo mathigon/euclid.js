@@ -73,6 +73,10 @@ export class Rectangle implements GeoShape {
             this.p.y < r.p.y + r.h && this.p.y + this.h > r.p.y);
   }
 
+  padding(top: number, right: number, bottom: number, left: number) {
+    return new Rectangle(this.p.shift(-left, -top), this.w + left + right, this.h + top + bottom);
+  }
+
   // ---------------------------------------------------------------------------
 
   contains(p: Point, tolerance?: number) {
