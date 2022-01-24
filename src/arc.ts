@@ -6,6 +6,7 @@
 
 import {clamp, nearlyEquals} from '@mathigon/fermat';
 import {Angle} from './angle';
+import {Circle} from './circle';
 import {Line} from './line';
 import {ORIGIN, Point} from './point';
 import {GeoShape, rad, TransformMatrix, TWO_PI} from './utilities';
@@ -17,6 +18,10 @@ export class Arc implements GeoShape {
 
   constructor(readonly c: Point, readonly start: Point,
     readonly angle: number) {
+  }
+
+  get circle() {
+    return new Circle(this.c, this.radius);
   }
 
   get radius() {

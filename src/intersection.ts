@@ -6,12 +6,16 @@
 
 import {flatten} from '@mathigon/core';
 import {isBetween, nearlyEquals, square, subsets} from '@mathigon/fermat';
+import {Arc} from './arc';
 import {Circle} from './circle';
 import {Line, Ray, Segment} from './line';
 import {Point} from './point';
-import {isCircle, isLineLike, isPolygonLike} from './types';
+import {isArc, isCircle, isLineLike, isPolygonLike, isRay, isSegment} from './types';
 import {GeoShape} from './utilities';
 
+
+// -----------------------------------------------------------------------------
+// Helper functions
 
 function liesOnSegment(s: Segment, p: Point) {
   if (nearlyEquals(s.p1.x, s.p2.x)) return isBetween(p.y, s.p1.y, s.p2.y);
@@ -19,11 +23,17 @@ function liesOnSegment(s: Segment, p: Point) {
 }
 
 function liesOnRay(r: Ray, p: Point) {
-  if (nearlyEquals(r.p1.x, r.p2.x)) {
-    return (p.y - r.p1.y) / (r.p2.y - r.p1.y) > 0;
-  }
+  if (nearlyEquals(r.p1.x, r.p2.x)) return (p.y - r.p1.y) / (r.p2.y - r.p1.y) > 0;
   return (p.x - r.p1.x) / (r.p2.x - r.p1.x) > 0;
 }
+
+function liesOnArc(a: Arc, p: Point) {
+  return isBetween(a.offset(p), 0, 1);
+}
+
+
+// -----------------------------------------------------------------------------
+// Foundations
 
 function lineLineIntersection(l1: Line, l2: Line) {
   const d1x = l1.p1.x - l1.p2.x;
@@ -91,26 +101,30 @@ function lineCircleIntersection(l: Line, c: Circle) {
   return [c.c.shift(xa + xb, ya + yb), c.c.shift(xa - xb, ya - yb)];
 }
 
-/** Finds the intersection of two lines or circles. */
-function simpleIntersection(a: Line|Circle, b: Line|Circle): Point[] {
+
+// -----------------------------------------------------------------------------
+// Exported functions
+
+function simpleIntersection(a: Line|Circle|Arc, b: Line|Circle|Arc): Point[] {
   let results: Point[] = [];
 
-  // TODO Handle Arcs and Rays
+  const a1 = isArc(a) ? a.circle : a;
+  const b1 = isArc(b) ? b.circle : b;
+
   if (isLineLike(a) && isLineLike(b)) {
     results = lineLineIntersection(a, b);
-  } else if (isLineLike(a) && isCircle(b)) {
-    results = lineCircleIntersection(a, b);
-  } else if (isCircle(a) && isLineLike(b)) {
-    results = lineCircleIntersection(b, a);
-  } else if (isCircle(a) && isCircle(b)) {
-    results = circleCircleIntersection(a, b);
+  } else if (isLineLike(a1) && isCircle(b1)) {
+    results = lineCircleIntersection(a1, b1);
+  } else if (isCircle(a1) && isLineLike(b1)) {
+    results = lineCircleIntersection(b1, a1);
+  } else if (isCircle(a1) && isCircle(b1)) {
+    results = circleCircleIntersection(a1, b1);
   }
 
   for (const x of [a, b]) {
-    if (x.type === 'segment') {
-      results = results.filter(i => liesOnSegment(x as Segment, i));
-    }
-    if (x.type === 'ray') results = results.filter(i => liesOnRay(x as Ray, i));
+    if (isSegment(x)) results = results.filter(i => liesOnSegment(x, i));
+    if (isRay(x)) results = results.filter(i => liesOnRay(x, i));
+    if (isArc(x)) results = results.filter(i => liesOnArc(x, i));
   }
 
   return results;
@@ -137,5 +151,5 @@ export function intersections(...elements: GeoShape[]): Point[] {
   }
 
   // TODO Handle arcs, sectors and angles!
-  return simpleIntersection(a as (Line|Circle), b as (Line|Circle));
+  return simpleIntersection(a as (Line|Circle|Arc), b as (Line|Circle|Arc));
 }
