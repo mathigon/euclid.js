@@ -216,7 +216,7 @@ export class Point implements GeoElement, SimplePoint {
   }
 
   toString() {
-    return `Point(x: ${this.x}, y: ${this.y})`;
+    return `point(${this.x},${this.y})`;
   }
 }
 

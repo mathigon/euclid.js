@@ -135,4 +135,8 @@ export class Angle implements GeoShape {
     // TODO Implement
     return false;
   }
+
+  toString() {
+    return `angle(${this.a},${this.b},${this.c})`;
+  }
 }

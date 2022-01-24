@@ -22,6 +22,7 @@ export interface GeoElement {
   shift(x: number, y?: number): GeoElement;
   translate(p: Point): GeoElement;
   equals(other: GeoElement, tolerance?: number, oriented?: boolean): boolean;
+  toString(): string;
 }
 
 export interface GeoShape extends GeoElement {

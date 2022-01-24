@@ -265,6 +265,10 @@ export class Polygon implements GeoShape {
 
     return false;
   }
+
+  toString() {
+    return `polygon(${this.points.join(',')})`;
+  }
 }
 
 
@@ -287,6 +291,10 @@ export class Polyline extends Polygon {
       edges.push(new Segment(this.points[i], this.points[i + 1]));
     }
     return edges;
+  }
+
+  toString() {
+    return `polyline(${this.points.join(',')})`;
   }
 }
 

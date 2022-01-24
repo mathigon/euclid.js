@@ -96,6 +96,6 @@ export class Circle implements GeoShape {
   }
 
   toString() {
-    return `Circle(c: ${this.c}, r: ${this.r})`;
+    return `circle(${this.c},${this.r})`;
   }
 }

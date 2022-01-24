@@ -151,7 +151,7 @@ export class Line implements GeoShape {
   }
 
   toString() {
-    return `Line(p1: ${this.p1}, p2: ${this.p2})`;
+    return `line(${this.p1},${this.p2})`;
   }
 }
 
@@ -170,7 +170,7 @@ export class Ray extends Line {
   }
 
   toString() {
-    return `Ray(p1: ${this.p1}, p2: ${this.p2})`;
+    return `ray(${this.p1},${this.p2})`;
   }
 }
 
@@ -214,6 +214,6 @@ export class Segment extends Line {
   }
 
   toString() {
-    return `Segment(p1: ${this.p1}, p2: ${this.p2})`;
+    return `segment(${this.p1},${this.p2})`;
   }
 }

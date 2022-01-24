@@ -111,4 +111,8 @@ export class Ellipse implements GeoShape {
     // TODO Implement
     return false;
   }
+
+  toString() {
+    return `ellipse(${this.c},${this.a},${this.b})`;
+  }
 }

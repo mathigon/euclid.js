@@ -134,6 +134,6 @@ export class Rectangle implements GeoShape {
   }
 
   toString() {
-    return `Rectangle(p: ${this.p}, w: ${this.w}, h: ${this.h})`;
+    return `rectangle(${this.p},${this.w},${this.h})`;
   }
 }

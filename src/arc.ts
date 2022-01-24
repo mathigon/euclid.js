@@ -108,6 +108,10 @@ export class Arc implements GeoShape {
     // TODO Implement
     return false;
   }
+
+  toString() {
+    return `arc(${this.c},${this.start},${this.angle})`;
+  }
 }
 
 export class Sector extends Arc {
@@ -115,5 +119,9 @@ export class Sector extends Arc {
 
   contains(p: Point) {
     return Point.distance(p, this.c) <= this.radius && new Angle(this.start, this.c, p).rad <= this.angle;
+  }
+
+  toString() {
+    return `sector(${this.c},${this.start},${this.angle})`;
   }
 }
