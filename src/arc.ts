@@ -66,6 +66,10 @@ export class Arc implements GeoShape {
     return this.start.rotate(this.angle * t, this.c);
   }
 
+  offset(p: Point) {
+    return new Angle(this.start, this.c, p).rad / this.angle;
+  }
+
   contains(p: Point) {
     // TODO Is there a better way to do this?
     return p.equals(this.project(p));

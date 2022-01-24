@@ -95,9 +95,12 @@ export class Rectangle implements GeoShape {
     return q!;
   }
 
-  at(_t: number) {
-    // TODO Implement
-    return this.p;
+  at(t: number) {
+    return this.polygon.at(t);
+  }
+
+  offset(p: Point) {
+    return this.polygon.offset(p);
   }
 
   // ---------------------------------------------------------------------------

@@ -70,6 +70,11 @@ export class Ellipse implements GeoShape {
     return this.c.shift(this.a * Math.cos(th), this.b * Math.sin(th));
   }
 
+  offset(p: Point) {
+    // TODO Implement
+    return 0.5;
+  }
+
   contains(_p: Point) {
     // TODO Implement
     return false;

@@ -100,6 +100,10 @@ export class Angle implements GeoShape {
     return this.c;
   }
 
+  offset() {
+    return 0;
+  }
+
   contains() {
     return false;
   }

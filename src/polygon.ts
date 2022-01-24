@@ -11,7 +11,7 @@ import {Circle} from './circle';
 import {intersections} from './intersection';
 import {Line, Segment} from './line';
 import {ORIGIN, Point} from './point';
-import {GeoShape, TransformMatrix, TWO_PI} from './utilities';
+import {findClosest, GeoShape, TransformMatrix, TWO_PI} from './utilities';
 
 
 /** A polygon defined by its vertex points. */
@@ -66,11 +66,11 @@ export class Polygon implements GeoShape {
   }
 
   get edges() {
-    const p = this.points;
-    const n = p.length;
-
+    const n = this.points.length;
     const edges = [];
-    for (let i = 0; i < n; ++i) edges.push(new Segment(p[i], p[(i + 1) % n]));
+    for (let i = 0; i < n; ++i) {
+      edges.push(new Segment(this.points[i], this.points[(i + 1) % n]));
+    }
     return edges;
   }
 
@@ -194,23 +194,31 @@ export class Polygon implements GeoShape {
   }
 
   at(t: number) {
-    return Point.interpolateList([...this.points, this.points[0]], t);
+    if (t < 0) t += Math.floor(t);
+    const offset = t * this.circumference;
+    let cum = 0;
+    for (const e of this.edges) {
+      const l = e.length;
+      if (cum + l > offset) return e.at((offset - cum) / l);
+      cum += l;
+    }
+    return this.points[0];
+  }
+
+  offset(p: Point) {
+    const edges = this.edges;
+    const proj = findClosest(p, this.edges) || [this.points[0], 0] as const;
+
+    let offset = 0;
+    for (let i = 0; i < proj[1]; ++i) offset += edges[i].length;
+    offset += edges[proj[1]].offset(p) * edges[proj[1]].length;
+
+    return offset / this.circumference;
   }
 
   project(p: Point) {
-    let q: Point|undefined = undefined;
-    let d = Infinity;
-
-    for (const e of this.edges) {
-      const q1 = e.project(p);
-      const d1 = Point.distance(p, q1);
-      if (d1 < d) {
-        q = q1;
-        d = d1;
-      }
-    }
-
-    return q || this.points[0];
+    const proj = findClosest(p, this.edges);
+    return proj ? proj[0] : this.points[0];
   }
 
   /** Center this polygon on a given point or the origin */
@@ -275,6 +283,10 @@ export class Polygon implements GeoShape {
 /** A polyline defined by its vertex points. */
 export class Polyline extends Polygon {
   readonly type = 'polyline';
+
+  get circumference() {
+    return this.length;
+  }
 
   get length() {
     let length = 0;

@@ -9,7 +9,7 @@ import {Arc} from './arc';
 import {Line} from './line';
 import {ORIGIN, Point} from './point';
 import {Rectangle} from './rectangle';
-import {GeoShape, TransformMatrix, TWO_PI} from './utilities';
+import {GeoShape, rad, TransformMatrix, TWO_PI} from './utilities';
 
 
 /** A circle with a given center and radius. */
@@ -57,6 +57,10 @@ export class Circle implements GeoShape {
   at(t: number) {
     const a = TWO_PI * t;
     return this.c.shift(this.r * Math.cos(a), this.r * Math.sin(a));
+  }
+
+  offset(p: Point) {
+    return rad(p, this.c) / TWO_PI;
   }
 
   contains(p: Point) {
