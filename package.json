@@ -28,7 +28,7 @@
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {
-    "@mathigon/core": "1.0.6",
+    "@mathigon/core": "1.0.7",
     "@mathigon/fermat": "1.0.7"
   },
   "devDependencies": {
