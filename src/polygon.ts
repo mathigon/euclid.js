@@ -331,6 +331,7 @@ export class Triangle extends Polygon {
     const center = new Point(ux / d, uy / d);
     const radius = Point.distance(center, this.points[0]);
 
+    if (isNaN(radius) || radius > Number.MAX_SAFE_INTEGER) return;
     return new Circle(center, radius);
   }
 
@@ -346,7 +347,7 @@ export class Triangle extends Polygon {
     const center = new Point(ux / total, uy / total);
     const radius = center.distanceFromLine(edges[0]);
 
-    return new Circle(center, radius);
+    return isNaN(radius) ? undefined : new Circle(center, radius);
   }
 
   get orthocenter() {
