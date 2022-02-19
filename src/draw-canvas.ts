@@ -4,8 +4,7 @@
 // =============================================================================
 
 
-// / <reference lib="dom" />
-import {isCircle, isPolygon, isPolyline, isSegment} from './types';
+import {isAngle, isCircle, isPolygonLike, isPolyline, isSegment} from './types';
 import {GeoElement, TWO_PI} from './utilities';
 
 
@@ -22,8 +21,9 @@ type CanvasLineCap = 'butt' | 'round' | 'square';
 type CanvasLineJoin = 'bevel' | 'miter' | 'round';
 
 
-export function drawCanvas(ctx: CanvasRenderingContext2D, obj: GeoElement,
-  options: CanvasDrawingOptions = {}) {
+export function drawCanvas(ctx: CanvasRenderingContext2D, obj: GeoElement, options: CanvasDrawingOptions = {}): void {
+  if (isAngle(obj)) return drawCanvas(ctx, obj.shape(!!options.fill), options);
+
   if (options.fill) ctx.fillStyle = options.fill;
   if (options.opacity) ctx.globalAlpha = options.opacity;
 
@@ -43,9 +43,10 @@ export function drawCanvas(ctx: CanvasRenderingContext2D, obj: GeoElement,
   } else if (isCircle(obj)) {
     ctx.arc(obj.c.x, obj.c.y, obj.r, 0, TWO_PI);
 
-  } else if (isPolygon(obj)) {
-    ctx.moveTo(obj.points[0].x, obj.points[0].y);
-    for (const p of obj.points.slice(1)) ctx.lineTo(p.x, p.y);
+  } else if (isPolygonLike(obj)) {
+    const points = obj.points;
+    ctx.moveTo(points[0].x, points[0].y);
+    for (const p of points.slice(1)) ctx.lineTo(p.x, p.y);
     ctx.closePath();
 
   } else if (isPolyline(obj)) {
@@ -53,7 +54,7 @@ export function drawCanvas(ctx: CanvasRenderingContext2D, obj: GeoElement,
     for (const p of obj.points.slice(1)) ctx.lineTo(p.x, p.y);
   }
 
-  // TODO Support for Line, Ray, Arc, Sector, Angle and Rectangle objects
+  // TODO Support for Line, Ray, Arc and Sector objects
 
   if (options.fill) ctx.fill();
   if (options.stroke) ctx.stroke();

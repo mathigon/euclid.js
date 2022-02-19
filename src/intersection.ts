@@ -10,7 +10,7 @@ import {Arc} from './arc';
 import {Circle} from './circle';
 import {Line, Ray, Segment} from './line';
 import {Point} from './point';
-import {isArc, isCircle, isLineLike, isPolygonLike, isRay, isSegment} from './types';
+import {isAngle, isArc, isCircle, isLineLike, isPolygonLike, isRay, isSegment} from './types';
 import {GeoShape} from './utilities';
 
 
@@ -139,6 +139,8 @@ export function intersections(...elements: GeoShape[]): Point[] {
 
   let [a, b] = elements;
 
+  if (isAngle(a)) a = a.shape(true);
+  if (isAngle(b)) b = b.shape(true);
   if (isPolygonLike(b)) [a, b] = [b, a];
 
   if (isPolygonLike(a)) {

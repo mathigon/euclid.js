@@ -4,10 +4,11 @@
 // =============================================================================
 
 
-import {nearlyEquals} from '@mathigon/fermat';
-import {Arc} from './arc';
-import {Line} from './line';
+import {clamp, nearlyEquals} from '@mathigon/fermat';
+import {Arc, Sector} from './arc';
+import {Line, Segment} from './line';
 import {ORIGIN, Point} from './point';
+import {Polygon, Polyline} from './polygon';
 import {GeoShape, SimplePoint, TransformMatrix, TWO_PI} from './utilities';
 
 
@@ -90,10 +91,38 @@ export class Angle implements GeoShape {
   }
 
   // ---------------------------------------------------------------------------
+
+  /** Radius of the arc or sector representing this angle. */
+  get radius() {
+    return 24 + 20 * (1 - clamp(this.rad, 0, Math.PI) / Math.PI);
+  }
+
+  /** Shape object that can be used to draw this angle. */
+  shape(filled = true, radius?: number, round?: boolean) {
+    if (this.a.equals(this.b) || this.c.equals(this.b)) return new Polygon(ORIGIN);
+
+    const angled = this.isRight && !round;
+    if (!radius) radius = angled ? 20 : this.radius;
+
+    const ba = new Segment(this.b, this.a);
+    const a = ba.at(radius / ba.length);
+
+    if (angled) {
+      const bc = Point.difference(this.c, this.b).unitVector.scale(radius);
+      if (filled) return new Polygon(this.b, a, a.add(bc), this.b.add(bc));
+      return new Polyline(a, a.add(bc), this.b.add(bc));
+    }
+
+    if (filled) return new Sector(this.b, a, this.rad);
+    return new Arc(this.b, a, this.rad);
+  }
+
+
+  // ---------------------------------------------------------------------------
   // These functions are just included for compatibility with GeoPath
 
-  project() {
-    return this.c;
+  project(p: Point) {
+    return this.contains(p) ? p : this.shape(true).project(p);
   }
 
   at() {
@@ -104,8 +133,8 @@ export class Angle implements GeoShape {
     return 0;
   }
 
-  contains() {
-    return false;
+  contains(p: Point) {
+    return this.shape(true).contains(p);
   }
 
   // ---------------------------------------------------------------------------

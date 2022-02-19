@@ -5,8 +5,6 @@
 
 
 import {isOneOf} from '@mathigon/core';
-import {clamp} from '@mathigon/fermat';
-import {Angle} from './angle';
 import {Arc} from './arc';
 import {intersections} from './intersection';
 import {Line} from './line';
@@ -38,37 +36,6 @@ function drawArc(a: Point, b: Point, c: Point) {
   const sweep = (orient > 0) ? 1 : 0;
   const size = Point.distance(b, a);
   return [a.x, `${a.y}A${size}`, size, 0, sweep, 1, c.x, c.y].join(',');
-}
-
-export function angleSize(angle: Angle, options: SVGDrawingOptions = {}) {
-  if (angle.isRight && !options.round) return 20;
-  return 24 + 20 * (1 - clamp(angle.rad, 0, Math.PI) / Math.PI);
-}
-
-function drawAngle(angle: Angle, options: SVGDrawingOptions = {}) {
-  let a = angle.a;
-  const b = angle.b;
-  let c = angle.c;
-
-  const size = options.size || angleSize(angle, options);
-
-  const ba = Point.difference(a, b).unitVector;
-  const bc = Point.difference(c, b).unitVector;
-
-  a = Point.sum(b, ba.scale(size));
-  c = Point.sum(b, bc.scale(size));
-
-  let p = options.fill ? `M${b.x},${b.y}L` : 'M';
-
-  if (angle.isRight && !options.round) {
-    const d = Point.sum(a, bc.scale(size));
-    p += `${a.x},${a.y}L${d.x},${d.y}L${c.x},${c.y}`;
-  } else {
-    p += drawArc(a, b, c);
-  }
-
-  if (options.fill) p += 'Z';
-  return p;
 }
 
 function drawPath(...points: Point[]) {
@@ -141,10 +108,11 @@ function drawArcArrows(x: Arc, type: LineArrow) {
 // -----------------------------------------------------------------------------
 // Draw Function
 
-export function drawSVG(obj: GeoElement, options: SVGDrawingOptions = {}) {
+export function drawSVG(obj: GeoElement, options: SVGDrawingOptions = {}): string {
 
   if (isAngle(obj)) {
-    return drawAngle(obj, options);
+    const shape = obj.shape(!!options.fill, options.size, options.round);
+    return drawSVG(shape, options);
   }
 
   if (isSegment(obj)) {
