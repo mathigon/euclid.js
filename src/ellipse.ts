@@ -4,7 +4,7 @@
 // =============================================================================
 
 
-import {quadratic} from '@mathigon/fermat';
+import {nearlyEquals, quadratic} from '@mathigon/fermat';
 import {Angle} from './angle';
 import {Line} from './line';
 import {ORIGIN, Point} from './point';
@@ -13,24 +13,48 @@ import {GeoShape, TransformMatrix, TWO_PI} from './utilities';
 
 export class Ellipse implements GeoShape {
   readonly type = 'ellipse';
+  readonly a: number;
+  readonly b: number;
+  readonly angle: number;
   readonly f1: Point;
   readonly f2: Point;
 
-  constructor(readonly c: Point, readonly a: number, readonly b: number) {
-    // TODO Support vertical and rotated ellipses
-    if (a < b) throw new Error('Vertical ellipses not supported.');
+  /**
+   * @param c Center of the ellipse
+   * @param a Major axis
+   * @param b Minor axis
+   * @param angle The rotation of the major axis of the ellipse.
+   */
+  constructor(readonly c: Point, a: number, b: number, angle = 0) {
+    if (a < b) {
+      [a, b] = [b, a];
+      angle += Math.PI / 2;
+    }
+    this.a = a;
+    this.b = b;
+    this.angle = angle;
+
     const f = Math.sqrt(a ** 2 - b ** 2);  // Distance from focus to the center.
-    this.f1 = c.shift(-f, 0);
-    this.f2 = c.shift(f, 0);
+    this.f1 = this.c.add(new Point(-f, 0).rotate(angle));
+    this.f2 = this.c.add(new Point(f, 0).rotate(angle));
+  }
+
+  get rx() {
+    return nearlyEquals(this.angle, 0) ? this.a : nearlyEquals(this.angle, Math.PI / 2) ? this.b : undefined;
+  }
+
+  get ry() {
+    return nearlyEquals(this.angle, 0) ? this.b : nearlyEquals(this.angle, Math.PI / 2) ? this.a : undefined;
   }
 
   normalAt(p: Point) {
-    const a = new Angle(this.f1, p, this.f2);
-    return a.bisector!;
+    return new Angle(this.f1, p, this.f2).bisector!;
   }
 
   /** Intersection between an ellipse and a line. */
   intersect(line: Line) {
+    line = line.rotate(-this.angle, this.c);
+
     const dx = line.p1.x - line.p2.x;
     const dy = line.p1.y - line.p2.y;
 
@@ -38,11 +62,11 @@ export class Ellipse implements GeoShape {
     const py = this.c.y - line.p1.y;
 
     const A = (dx / this.a) ** 2 + (dy / this.b) ** 2;
-    const B = 2 * px * dx / (this.a) ** 2 + 2 * py * dy / (this.b) ** 2;
+    const B = (2 * px * dx) / this.a ** 2 + (2 * py * dy) / this.b ** 2;
     const C = (px / this.a) ** 2 + (py / this.b) ** 2 - 1;
 
     const points = quadratic(A, B, C);
-    return points.map(t => line.at(t));
+    return points.map((t) => line.at(t).rotate(this.angle, this.c));
   }
 
   /**
@@ -53,21 +77,23 @@ export class Ellipse implements GeoShape {
     const c = Point.distance(f1, f2) / 2;  // Half distance between foci.
     const a = stringLength / 2;
     const b = Math.sqrt(a ** 2 - c ** 2);
-    return new Ellipse(Point.interpolate(f1, f2), a, b);
+    const angle = new Line(f1, f2).angle;
+    return new Ellipse(Point.interpolate(f1, f2), a, b, angle);
   }
 
   // ---------------------------------------------------------------------------
 
   project(p: Point) {
-    const [a, b] = [this.a, this.b];
+    p = p.rotate(-this.angle, this.c);
     const th = p.angle(this.c);
-    const k = a * b / Math.sqrt((b * Math.cos(th)) ** 2 + (a * Math.sin(th)) ** 2);
-    return new Point(k * Math.cos(th), k * Math.sin(th));
+    return this.at(th / TWO_PI);
   }
 
   at(t: number) {
     const th = TWO_PI * t;
-    return this.c.shift(this.a * Math.cos(th), this.b * Math.sin(th));
+    return this.c
+      .shift(this.a * Math.cos(th), this.b * Math.sin(th))
+      .rotate(this.angle, this.c);
   }
 
   offset(p: Point) {
@@ -75,9 +101,11 @@ export class Ellipse implements GeoShape {
     return 0.5;
   }
 
-  contains(_p: Point) {
-    // TODO Implement
-    return false;
+  contains(p: Point) {
+    const A = Math.cos(this.angle) ** 2 / this.a ** 2 + Math.sin(this.angle) ** 2 / this.b ** 2;
+    const B = 2 * Math.cos(this.angle) * Math.sin(this.angle) * (1 / this.a ** 2 - 1 / this.b ** 2);
+    const C = Math.sin(this.angle) ** 2 / this.a ** 2 + Math.cos(this.angle) ** 2 / this.b ** 2;
+    return A * p.x ** 2 + B * p.x * p.y + C * p.y ** 2 <= 1;
   }
 
   // ---------------------------------------------------------------------------
@@ -87,37 +115,38 @@ export class Ellipse implements GeoShape {
     return this;
   }
 
-  rotate(_a: number, _c = ORIGIN): this {
-    // TODO Implement
-    return this;
+  rotate(a: number, c = ORIGIN) {
+    const l = new Line(this.f1, this.f2).rotate(a, c);
+    return Ellipse.fromFoci(l.p1, l.p2, this.a * 2);
   }
 
-  reflect(_l: Line): this {
-    // TODO Implement
-    return this;
+  reflect(l: Line) {
+    const axis = new Line(this.f1, this.f2).reflect(l);
+    return Ellipse.fromFoci(axis.p1, axis.p2, this.a * 2);
   }
 
-  scale(_sx: number, _sy = _sx): this {
-    // TODO Implement
-    return this;
+  scale(sx: number, sy = sx) {
+    return new Ellipse(this.c, this.a * sx, this.b * sy, this.angle);
   }
 
-  shift(_x: number, _y = _x): this {
-    // TODO Implement
-    return this;
+  shift(x: number, y = x) {
+    return new Ellipse(this.c.shift(x, y), this.a, this.b, this.angle);
   }
 
-  translate(_p: Point) {
-    // TODO Implement
-    return this;
+  translate(p: Point) {
+    return new Ellipse(this.c.translate(p), this.a, this.b, this.angle);
   }
 
-  equals() {
-    // TODO Implement
-    return false;
+  equals(other: Ellipse, tolerance?: number) {
+    return (
+      nearlyEquals(this.a, other.a, tolerance) &&
+      nearlyEquals(this.b, other.b, tolerance) &&
+      nearlyEquals(this.angle, other.angle, tolerance) &&
+      this.c.equals(other.c, tolerance)
+    );
   }
 
   toString() {
-    return `ellipse(${this.c},${this.a},${this.b})`;
+    return `ellipse(${this.c},${this.a},${this.b},${this.angle})`;
   }
 }

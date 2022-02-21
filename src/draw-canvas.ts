@@ -4,7 +4,7 @@
 // =============================================================================
 
 
-import {isAngle, isCircle, isPolygonLike, isPolyline, isSegment} from './types';
+import {isAngle, isCircle, isEllipse, isPolygonLike, isPolyline, isSegment} from './types';
 import {GeoElement, TWO_PI} from './utilities';
 
 
@@ -52,6 +52,9 @@ export function drawCanvas(ctx: CanvasRenderingContext2D, obj: GeoElement, optio
   } else if (isPolyline(obj)) {
     ctx.moveTo(obj.points[0].x, obj.points[0].y);
     for (const p of obj.points.slice(1)) ctx.lineTo(p.x, p.y);
+
+  } else if (isEllipse(obj)) {
+    ctx.ellipse(obj.c.x, obj.c.y, obj.a, obj.b, obj.angle, 0, TWO_PI);
   }
 
   // TODO Support for Line, Ray, Arc and Sector objects
