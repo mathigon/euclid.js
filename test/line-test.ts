@@ -32,3 +32,13 @@ tape('offset and projections', (test) => {
 
   test.end();
 });
+
+tape('line intercepts', (test) => {
+  const line1 = new Line(new Point(1, 1), new Point(2, 2));
+  test.equals(line1.intercept, 0);
+
+  const line2 = new Line(new Point(0, 3), new Point(2, 1));
+  test.equals(line2.intercept, 3);
+
+  test.end();
+});

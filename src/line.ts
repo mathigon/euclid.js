@@ -42,7 +42,7 @@ export class Line implements GeoShape {
 
   /** The y-axis intercept of this line. */
   get intercept() {
-    return this.p1.y + this.slope * this.p1.x;
+    return this.p1.y - this.slope * this.p1.x;
   }
 
   /** The angle formed between this line and the x-axis. */
