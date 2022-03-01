@@ -33,10 +33,10 @@
   },
   "devDependencies": {
     "@types/tape": "4.13.2",
-    "@typescript-eslint/eslint-plugin": "5.10.2",
-    "@typescript-eslint/parser": "5.10.2",
+    "@typescript-eslint/eslint-plugin": "5.13.0",
+    "@typescript-eslint/parser": "5.13.0",
     "esbuild": "0.14.16",
-    "eslint": "8.8.0",
+    "eslint": "8.10.0",
     "eslint-plugin-import": "2.25.4",
     "tape": "5.5.2",
     "ts-node": "10.4.0",
