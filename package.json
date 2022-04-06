@@ -18,6 +18,11 @@
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    "import": "./dist/index.esm.js",
+    "require": "./dist/index.cjs.js"
+  },
   "scripts": {
     "test": "ts-node node_modules/tape/bin/tape test/**/*.ts",
     "prepublishOnly": "npm test && npm run lint && npm run build",
