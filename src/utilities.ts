@@ -35,7 +35,7 @@ export interface GeoShape extends GeoElement {
   reflect(l: Line): GeoShape;
   scale(sx: number, sy?: number): GeoShape;
   shift(x: number, y?: number): GeoShape;
-  translate(p: Point): GeoShape;
+  translate(p: SimplePoint): GeoShape;
 }
 
 export const TWO_PI = 2 * Math.PI;

@@ -9,7 +9,7 @@ import {Arc} from './arc';
 import {Line} from './line';
 import {ORIGIN, Point} from './point';
 import {Rectangle} from './rectangle';
-import {GeoShape, rad, TransformMatrix, TWO_PI} from './utilities';
+import {GeoShape, rad, SimplePoint, TransformMatrix, TWO_PI} from './utilities';
 
 
 /** A circle with a given center and radius. */
@@ -91,7 +91,7 @@ export class Circle implements GeoShape {
     return new Circle(this.c.shift(x, y), this.r);
   }
 
-  translate(p: Point) {
+  translate(p: SimplePoint) {
     return this.shift(p.x, p.y);
   }
 

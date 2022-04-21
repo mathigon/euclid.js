@@ -206,7 +206,7 @@ export class Point implements GeoElement, SimplePoint {
     return new Point(this.x + x, this.y + y);
   }
 
-  translate(p: Point) {
+  translate(p: SimplePoint) {
     return this.shift(p.x, p.y);  // Alias for .add()
   }
 

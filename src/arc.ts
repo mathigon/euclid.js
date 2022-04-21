@@ -9,7 +9,7 @@ import {Angle} from './angle';
 import {Circle} from './circle';
 import {Line} from './line';
 import {ORIGIN, Point} from './point';
-import {GeoShape, rad, TransformMatrix, TWO_PI} from './utilities';
+import {GeoShape, rad, SimplePoint, TransformMatrix, TWO_PI} from './utilities';
 
 
 /** An arc segment of a circle, with given center, start point and angle. */
@@ -109,7 +109,7 @@ export class Arc implements GeoShape {
       this.start.shift(x, y), this.angle);
   }
 
-  translate(p: Point) {
+  translate(p: SimplePoint) {
     return this.shift(p.x, p.y);
   }
 

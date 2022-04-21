@@ -140,7 +140,7 @@ export class Line implements GeoShape {
     return this.make(this.p1.shift(x, y), this.p2.shift(x, y));
   }
 
-  translate(p: Point) {
+  translate(p: SimplePoint) {
     return this.shift(p.x, p.y);
   }
 

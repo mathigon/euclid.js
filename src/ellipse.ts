@@ -8,7 +8,7 @@ import {nearlyEquals, quadratic} from '@mathigon/fermat';
 import {Angle} from './angle';
 import {Line} from './line';
 import {ORIGIN, Point} from './point';
-import {GeoShape, TransformMatrix, TWO_PI} from './utilities';
+import {GeoShape, SimplePoint, TransformMatrix, TWO_PI} from './utilities';
 
 
 export class Ellipse implements GeoShape {
@@ -133,7 +133,7 @@ export class Ellipse implements GeoShape {
     return new Ellipse(this.c.shift(x, y), this.a, this.b, this.angle);
   }
 
-  translate(p: Point) {
+  translate(p: SimplePoint) {
     return new Ellipse(this.c.translate(p), this.a, this.b, this.angle);
   }
 

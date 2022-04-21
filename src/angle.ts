@@ -160,7 +160,7 @@ export class Angle implements GeoShape {
     return new Angle(this.a.shift(x, y), this.b.shift(x, y), this.c.shift(x, y));
   }
 
-  translate(p: Point) {
+  translate(p: SimplePoint) {
     return new Angle(this.a.translate(p), this.b.translate(p), this.c.translate(p));
   }
 

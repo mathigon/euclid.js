@@ -127,7 +127,7 @@ export class Rectangle implements GeoShape {
     return new Rectangle(this.p.shift(x, y), this.w, this.h);
   }
 
-  translate(p: Point) {
+  translate(p: SimplePoint) {
     return this.shift(p.x, p.y);
   }
 

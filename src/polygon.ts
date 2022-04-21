@@ -11,7 +11,7 @@ import {Circle} from './circle';
 import {intersections} from './intersection';
 import {Line, Segment} from './line';
 import {ORIGIN, Point} from './point';
-import {findClosest, GeoShape, TransformMatrix, TWO_PI} from './utilities';
+import {findClosest, GeoShape, SimplePoint, TransformMatrix, TWO_PI} from './utilities';
 
 
 /** A polygon defined by its vertex points. */
@@ -254,7 +254,7 @@ export class Polygon implements GeoShape {
     return new (<any> this.constructor)(...points);
   }
 
-  translate(p: Point) {
+  translate(p: SimplePoint) {
     return this.shift(p.x, p.y);
   }
 
