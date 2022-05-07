@@ -2,21 +2,17 @@
   "extends": ["config:base"],
   "schedule": ["on the first day of the month"],
   "packageRules": [{
-    "packagePatterns": ["eslint"],
-    "groupName": "lint",
-    "automerge": true
-  }, {
     "packagePatterns": ["^@mathigon"],
-    "groupName": "mathigon",
+    "groupName": "Mathigon",
     "schedule": ["at any time"],
     "automerge": true
   }, {
     "packagePatterns": ["ts-node", "^typescript", "tslib"],
-    "groupName": "typescript",
+    "groupName": "Typescript",
     "automerge": true
   }, {
-    "packagePatterns": ["tape"],
-    "groupName": "tests",
+    "packagePatterns": ["tape", "esbuild", "eslint"],
+    "groupName": "Test and Build",
     "automerge": true
   }]
 }
