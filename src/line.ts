@@ -169,6 +169,12 @@ export class Ray extends Line {
     return this.p1.equals(other.p1, tolerance) && this.contains(other.p2, tolerance);
   }
 
+  contains(p: Point, tolerance?: number) {
+    if (!Line.prototype.contains.call(this, p, tolerance)) return false;
+    const offset = this.offset(p);
+    return nearlyEquals(offset, 0, tolerance) || offset > 0;
+  }
+
   toString() {
     return `ray(${this.p1},${this.p2})`;
   }

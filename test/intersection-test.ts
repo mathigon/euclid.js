@@ -5,7 +5,7 @@
 
 
 import tape from 'tape';
-import {Circle, intersections, Line, Point, Polygon, Segment} from '../src';
+import {Circle, intersections, Line, Point, Polygon, Ray, Segment} from '../src';
 
 
 tape('segment-segment intersection', (test) => {
@@ -41,6 +41,13 @@ tape('polygon-line intersection', (test) => {
   const res = intersections(l1, p1);
   test.equal(res.length, 2);
   test.deepEqual([res[0].x, res[0].y, res[1].x, res[1].y], [1, 2, 2, 1]);
+
+  const p2 = new Polygon(new Point(0, 0), new Point(100, 0), new Point(100, 100), new Point(0, 100), new Point(0, 50));
+  const ray = new Ray(new Point(50, 50), new Point(100, 50));
+  const int = intersections(p2, ray);
+  test.equal(int.length, 1);
+  test.deepEqual([int[0].x, int[0].y], [100, 50]);
+
   test.end();
 });
 
