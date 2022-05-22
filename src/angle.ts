@@ -43,7 +43,7 @@ export class Angle implements GeoShape {
   }
 
   /** Checks if `a` and `b` are roughly equivalent (by default, within one degree of eachother) */
-  static equal(a: Angle, b: Angle, precision = Math.PI / 360) {
+  static equals(a: Angle, b: Angle, precision = Math.PI / 360) {
     return nearlyEquals(a.rad, b.rad, precision);
   }
 
@@ -169,8 +169,8 @@ export class Angle implements GeoShape {
     return new Angle(this.a.translate(p), this.b.translate(p), this.c.translate(p));
   }
 
-  equals(a: Angle) {
-    return Angle.equal(a, this);
+  equals(a: Angle, precision?: number) {
+    return Angle.equal(a, this, precision);
   }
 
   toString() {
