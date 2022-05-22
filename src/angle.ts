@@ -42,6 +42,11 @@ export class Angle implements GeoShape {
     return new Angle(p1, ORIGIN, p2);
   }
 
+  /** Checks if `a` and `b` are roughly equivalent (by default, within one degree of eachother) */
+  static equals(a: Angle, b: Angle, precision = Math.PI / 360) {
+    return nearlyEquals(a.rad, b.rad, precision);
+  }
+
   /** The size, in radians, of this angle. */
   get rad() {
     const phiA = Math.atan2(this.a.y - this.b.y, this.a.x - this.b.x);
@@ -164,9 +169,8 @@ export class Angle implements GeoShape {
     return new Angle(this.a.translate(p), this.b.translate(p), this.c.translate(p));
   }
 
-  equals(_a: Angle) {
-    // TODO Implement
-    return false;
+  equals(a: Angle, precision?: number) {
+    return Angle.equals(a, this, precision);
   }
 
   toString() {
