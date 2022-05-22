@@ -170,7 +170,7 @@ export class Angle implements GeoShape {
   }
 
   equals(a: Angle, precision?: number) {
-    return Angle.equal(a, this, precision);
+    return Angle.equals(a, this, precision);
   }
 
   toString() {
