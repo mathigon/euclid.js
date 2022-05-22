@@ -41,10 +41,10 @@ export class Angle implements GeoShape {
     const p2 = p1.rotate(val);
     return new Angle(p1, ORIGIN, p2);
   }
-  
+
   /** Checks if `a` and `b` are roughly equivalent (by default, within one degree of eachother) */
   static equal(a: Angle, b: Angle, precision = Math.PI / 360) {
-    return nearlyEquals(a.rad, b.rad, precision)
+    return nearlyEquals(a.rad, b.rad, precision);
   }
 
   /** The size, in radians, of this angle. */
