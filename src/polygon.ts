@@ -135,6 +135,12 @@ export class Polygon implements GeoShape {
     return new Polygon(...points);
   }
 
+  /** Creates a polygon from a shape. */
+  static from(shape: GeoShape, resolution = 60): Polygon {
+    const points = tabulate((i) => shape.at(i / resolution), resolution);
+    return new Polygon(...points);
+  }
+
   /** Interpolates the points of two polygons */
   static interpolate(p1: Polygon, p2: Polygon, t = 0.5) {
     // TODO support interpolating polygons with different numbers of points
