@@ -144,6 +144,11 @@ export class Line implements GeoShape {
     return this.shift(p.x, p.y);
   }
 
+  /** Reverse the line's start and end points. */
+  flip() {
+    return this.make(this.p2, this.p1)
+  }
+
   equals(other: Line, tolerance?: number) {
     // Note: Checking line types breaks some applications in Mathigon textbooks.
     // if (other.type !== 'line') return false;
