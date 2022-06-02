@@ -209,7 +209,12 @@ export class Segment extends Line {
 
   /** Contracts (or expands) a line by a specific ratio. */
   contract(x: number) {
-    return new Segment(this.at(x), this.at(1 - x));
+    return this.part(x, 1 - x);
+  }
+
+  /** Get part of a segment from a start to end ratio. */
+  part(a: number, b: number) {
+    return new Segment(this.at(a), this.at(b));
   }
 
   equals(other: Segment, tolerance?: number, oriented = false) {
