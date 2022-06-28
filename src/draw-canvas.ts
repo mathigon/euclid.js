@@ -4,7 +4,9 @@
 // =============================================================================
 
 
-import {isAngle, isCircle, isEllipse, isPolygonLike, isPolyline, isSegment} from './types';
+import {intersections} from './intersection';
+import {Rectangle} from './rectangle';
+import {isAngle, isCircle, isEllipse, isLineLike, isPolygonLike, isPolyline, isRay, isSegment} from './types';
 import {GeoElement, TWO_PI} from './utilities';
 
 
@@ -15,6 +17,7 @@ export interface CanvasDrawingOptions {
   strokeWidth?: number;
   lineCap?: CanvasLineCap;
   lineJoin?: CanvasLineJoin;
+  box?: Rectangle;
 }
 
 type CanvasLineCap = 'butt' | 'round' | 'square';
@@ -39,6 +42,14 @@ export function drawCanvas(ctx: CanvasRenderingContext2D, obj: GeoElement, optio
   if (isSegment(obj)) {
     ctx.moveTo(obj.p1.x, obj.p1.y);
     ctx.lineTo(obj.p2.x, obj.p2.y);
+
+  } else if (isLineLike(obj)) {
+    if (!options.box) return;
+    let [start, end] = intersections(obj, options.box);
+    if (isRay(obj)) end = obj.p1;
+    if (!start || !end) return;
+    ctx.moveTo(start.x, start.y);
+    ctx.lineTo(end.x, end.y);
 
   } else if (isCircle(obj)) {
     ctx.arc(obj.c.x, obj.c.y, obj.r, 0, TWO_PI);
