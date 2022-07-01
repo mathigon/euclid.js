@@ -37,8 +37,8 @@
   },
   "devDependencies": {
     "@types/tape": "4.13.2",
-    "@typescript-eslint/eslint-plugin": "5.30.0",
-    "@typescript-eslint/parser": "5.30.0",
+    "@typescript-eslint/eslint-plugin": "5.30.3",
+    "@typescript-eslint/parser": "5.30.3",
     "esbuild": "0.14.48",
     "eslint": "8.18.0",
     "eslint-plugin-import": "2.26.0",
