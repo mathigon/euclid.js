@@ -5,6 +5,7 @@
 
 
 import {isBetween, nearlyEquals} from '@mathigon/fermat';
+import {Bounds} from './bounds';
 import {Line} from './line';
 import {ORIGIN, Point} from './point';
 import {Polygon} from './polygon';
@@ -66,6 +67,10 @@ export class Rectangle implements GeoShape {
     const c = new Point(this.p.x + this.w, this.p.y + this.h);
     const d = new Point(this.p.x, this.p.y + this.h);
     return new Polygon(this.p, b, c, d);
+  }
+
+  get bounds() {
+    return new Bounds(this.p.x, this.p.x + this.w, this.p.y, this.p.y + this.h);
   }
 
   collision(r: Rectangle) {

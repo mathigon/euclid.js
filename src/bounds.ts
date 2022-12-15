@@ -11,8 +11,19 @@ import {Rectangle} from './rectangle';
 
 export class Bounds {
 
+  /**
+   * Use the `errorHandling` option to decide how to deal with cases where the
+   * min and max values are in the wrong order.
+   */
   constructor(public xMin: number, public xMax: number, public yMin: number,
-    public yMax: number) {
+    public yMax: number, errorHandling?: 'swap'|'center') {
+    if (errorHandling === 'swap') {
+      if (this.dx < 0) [this.xMin, this.xMax] = [xMax, xMin];
+      if (this.dy < 0) [this.yMin, this.yMax] = [yMax, yMin];
+    } else if (errorHandling === 'center') {
+      if (this.dx < 0) this.xMin = this.xMax = (xMin + xMax) / 2;
+      if (this.dy < 0) this.yMin = this.yMax = (yMin + yMax) / 2;
+    }
   }
 
   contains(p: Point) {
