@@ -58,6 +58,10 @@ export class Bounds {
     return [this.yMin, this.yMax];
   }
 
+  extend(top: number, right = top, bottom = top, left = right) {
+    return new Bounds(this.xMin - left, this.xMax + right, this.yMin - top, this.yMax + bottom);
+  }
+
   get rect() {
     return new Rectangle(new Point(this.xMin, this.yMin), this.dx, this.dy);
   }
