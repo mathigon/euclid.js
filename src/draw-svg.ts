@@ -126,7 +126,10 @@ export function drawSVG(obj: GeoElement, options: SVGDrawingOptions = {}): strin
   if (isRay(obj)) {
     if (!options.box) return '';
     const end = intersections(obj, options.box)[0];
-    return end ? drawPath(obj.p1, end) : '';
+    if (!end) return '';
+    let line = drawPath(obj.p1, end);
+    if (options.mark) line += drawLineMark(obj, options.mark);
+    return line;
   }
 
   if (isLine(obj)) {

@@ -6,6 +6,7 @@
 
 import {clamp, isBetween, nearlyEquals} from '@mathigon/fermat';
 import {ORIGIN, Point} from './point';
+import {isRay, isSegment} from './types';
 import {GeoShape, rad, SimplePoint, TransformMatrix} from './utilities';
 
 
@@ -15,10 +16,6 @@ export class Line implements GeoShape {
   flag?: number;
 
   constructor(readonly p1: Point, readonly p2: Point) {}
-
-  protected make(p1: Point, p2: Point) {
-    return new Line(p1, p2);
-  }
 
   /* The distance between the two points defining this line. */
   get length() {
@@ -57,19 +54,19 @@ export class Line implements GeoShape {
 
   /** The point representing the perpendicular vector of this line. */
   get perpendicularVector() {
-    return new Point(this.p2.y - this.p1.y,
-      this.p1.x - this.p2.x).unitVector;
+    return new Point(this.p2.y - this.p1.y, this.p1.x - this.p2.x).unitVector;
   }
 
-  /** Finds the line parallel to this one, going though point p. */
+  /** Finds the line parallel to this one, going through point p. */
   parallel(p: Point) {
-    const q = Point.sum(p, Point.difference(this.p2, this.p1));
-    return new Line(p, q);
+    return new Line(p, p.add(this.p2).subtract(this.p1));
   }
 
-  /** Finds the line perpendicular to this one, going though point p. */
+  /** Finds the line perpendicular to this one, going through point p. */
   perpendicular(p: Point) {
-    return new Line(p, Point.sum(p, this.perpendicularVector));
+    const q = this.line.project(p);
+    if (Point.equals(p, q)) return new Line(q, q.add(this.perpendicularVector.scale(this.length / 2)));
+    return new Line(q, p);
   }
 
   /** The perpendicular bisector of this line. */
@@ -81,6 +78,18 @@ export class Line implements GeoShape {
   distanceSquared(p: Point) {
     const proj = this.project(p);
     return (p.x - proj.x) ** 2 + (p.y - proj.y) ** 2;
+  }
+
+  get line(): Line {
+    return this.type === 'line' ? this : new Line(this.p1, this.p2);
+  }
+
+  get ray(): Ray {
+    return isRay(this) ? this : new Ray(this.p1, this.p2);
+  }
+
+  get segment(): Segment {
+    return isSegment(this) ? this : new Segment(this.p1, this.p2);
   }
 
   // ---------------------------------------------------------------------------
@@ -118,8 +127,7 @@ export class Line implements GeoShape {
   // ---------------------------------------------------------------------------
 
   transform(m: TransformMatrix): this {
-    return new (<any> this.constructor)(this.p1.transform(m),
-      this.p2.transform(m));
+    return new (<any> this.constructor)(this.p1.transform(m), this.p2.transform(m));
   }
 
   /** Rotates this line by a given angle (in radians), optionally around point `c`. */
@@ -133,11 +141,11 @@ export class Line implements GeoShape {
   }
 
   scale(sx: number, sy = sx) {
-    return this.make(this.p1.scale(sx, sy), this.p2.scale(sx, sy));
+    return new (<any> this.constructor)(this.p1.scale(sx, sy), this.p2.scale(sx, sy));
   }
 
   shift(x: number, y = x) {
-    return this.make(this.p1.shift(x, y), this.p2.shift(x, y));
+    return new (<any> this.constructor)(this.p1.shift(x, y), this.p2.shift(x, y));
   }
 
   translate(p: SimplePoint) {
@@ -160,17 +168,15 @@ export class Line implements GeoShape {
 export class Ray extends Line {
   readonly type = 'ray';
 
-  protected make(p1: Point, p2: Point) {
-    return new Ray(p1, p2);
-  }
-
   equals(other: Ray, tolerance?: number) {
     if (other.type !== 'ray') return false;
-    return this.p1.equals(other.p1, tolerance) && this.contains(other.p2, tolerance);
+    if (!this.p1.equals(other.p1, tolerance)) return false;
+    if (this.p2.equals(other.p2, tolerance)) return true;
+    return other.contains(this.p2, tolerance) || this.contains(other.p2, tolerance);
   }
 
   contains(p: Point, tolerance?: number) {
-    if (!Line.prototype.contains.call(this, p, tolerance)) return false;
+    if (!super.contains(p, tolerance)) return false;
     const offset = this.offset(p);
     return nearlyEquals(offset, 0, tolerance) || offset > 0;
   }
@@ -186,7 +192,7 @@ export class Segment extends Line {
   readonly type = 'segment';
 
   contains(p: Point, tolerance?: number) {
-    if (!Line.prototype.contains.call(this, p, tolerance)) return false;
+    if (!super.contains(p, tolerance)) return false;
     if (this.p1.equals(p, tolerance) || this.p2.equals(p, tolerance)) return true;
     if (nearlyEquals(this.p1.x, this.p2.x, tolerance)) {
       return isBetween(p.y, this.p1.y, this.p2.y);
@@ -195,16 +201,12 @@ export class Segment extends Line {
     }
   }
 
-  protected make(p1: Point, p2: Point) {
-    return new Segment(p1, p2);
-  }
-
   project(p: SimplePoint) {
     const a = Point.difference(this.p2, this.p1);
     const b = Point.difference(p, this.p1);
 
     const q = clamp(Point.dot(a, b) / this.lengthSquared, 0, 1);
-    return Point.sum(this.p1, a.scale(q));
+    return this.p1.add(a.scale(q));
   }
 
   /** Contracts (or expands) a line by a specific ratio. */
