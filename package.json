@@ -1,6 +1,6 @@
 {
   "name": "@mathigon/euclid",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "license": "MIT",
   "homepage": "https://mathigon.io/euclid",
   "repository": "mathigon/euclid.js",
@@ -32,8 +32,8 @@
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {
-    "@mathigon/core": "1.1.4",
-    "@mathigon/fermat": "1.1.4"
+    "@mathigon/core": "1.1.5",
+    "@mathigon/fermat": "1.1.5"
   },
   "devDependencies": {
     "@types/tape": "4.13.2",
