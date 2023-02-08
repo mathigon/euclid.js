@@ -126,7 +126,7 @@ export class Ellipse implements GeoShape {
   }
 
   scale(sx: number, sy = sx) {
-    return new Ellipse(this.c, this.a * sx, this.b * sy, this.angle);
+    return new Ellipse(this.c.scale(sx, sy), this.a * sx, this.b * sy, this.angle);
   }
 
   shift(x: number, y = x) {

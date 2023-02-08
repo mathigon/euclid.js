@@ -28,10 +28,11 @@ tape('vertical', (test) => {
 });
 
 tape('scale', (test) => {
-  const ellipse = new Ellipse(ORIGIN, 2, 1);
+  const ellipse = new Ellipse(new Point(1, 1), 2, 1);
   const scaled = ellipse.scale(2);
-  test.true(scaled.f1.equals(new Point(-Math.sqrt(3) * 2, 0)));
-  test.true(scaled.f2.equals(new Point(Math.sqrt(3) * 2, 0)));
+  test.true(scaled.f1.equals(new Point(2 - Math.sqrt(12), 2)));
+  test.true(scaled.f2.equals(new Point(2 + Math.sqrt(12), 2)));
+  test.true(scaled.c.equals(new Point(2, 2)));
   test.end();
 });
 
