@@ -17,7 +17,7 @@ import {Point} from './point';
 // -----------------------------------------------------------------------------
 // Utility Functions
 
-const PRECISION = 0.000001;
+const PRECISION = 0.001;
 
 function pointAboveOrOnLine(pt: Point, left: Point, right: Point) {
   const d1 = (right.x - left.x) * (pt.y - left.y);
