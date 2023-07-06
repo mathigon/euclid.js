@@ -83,6 +83,37 @@ export class Ellipse implements GeoShape {
 
   // ---------------------------------------------------------------------------
 
+  get majorVertices() {
+    return [this.c.add(new Point(-this.a, 0).rotate(this.angle)),
+      this.c.add(new Point(this.a, 0).rotate(this.angle))];
+  }
+
+  get minorVertices() {
+    return [this.c.add(new Point(0, -this.b).rotate(this.angle)),
+      this.c.add(new Point(0, this.b).rotate(this.angle))];
+  }
+
+  get extremes(): Point[] {
+    // See https://math.stackexchange.com/questions/4457548/find-extreme-values-of-ellipse
+    const {a, b, angle} = this;
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+
+    const sqSum = a**2 + b**2;
+    const sqDiff = (a**2 - b**2) * Math.cos(2 * angle);
+
+    const yMax = Math.sqrt((sqSum - sqDiff) / 2);
+    const xAtYMax = yMax * sqSum * sin * cos / (a**2 * sin**2 + b**2 * cos**2);
+
+    const xMax = Math.sqrt((sqSum + sqDiff) / 2);
+    const yAtXMax = xMax * sqSum * sin * cos / (a**2 * cos**2 + b**2 * sin**2);
+
+    return [new Point(xAtYMax, yMax).add(this.c),
+      new Point(xAtYMax, yMax).inverse.add(this.c),
+      new Point(xMax, yAtXMax).add(this.c),
+      new Point(xMax, yAtXMax).inverse.add(this.c)];
+  }
+
   project(p: Point) {
     p = p.rotate(-this.angle, this.c);
     const th = p.angle(this.c);
@@ -102,9 +133,12 @@ export class Ellipse implements GeoShape {
   }
 
   contains(p: Point) {
-    const A = Math.cos(this.angle) ** 2 / this.a ** 2 + Math.sin(this.angle) ** 2 / this.b ** 2;
-    const B = 2 * Math.cos(this.angle) * Math.sin(this.angle) * (1 / this.a ** 2 - 1 / this.b ** 2);
-    const C = Math.sin(this.angle) ** 2 / this.a ** 2 + Math.cos(this.angle) ** 2 / this.b ** 2;
+    const cos = Math.cos(this.angle);
+    const sin = Math.sin(this.angle);
+
+    const A = cos ** 2 / this.a ** 2 + sin ** 2 / this.b ** 2;
+    const B = 2 * cos * sin * (1 / this.a ** 2 - 1 / this.b ** 2);
+    const C = sin ** 2 / this.a ** 2 + cos ** 2 / this.b ** 2;
     return A * p.x ** 2 + B * p.x * p.y + C * p.y ** 2 <= 1;
   }
 

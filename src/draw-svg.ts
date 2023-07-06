@@ -5,12 +5,13 @@
 
 
 import {isOneOf} from '@mathigon/core';
+import {toDeg} from './angle';
 import {Arc} from './arc';
 import {intersections} from './intersection';
 import {Line} from './line';
 import {Point} from './point';
 import {Rectangle} from './rectangle';
-import {isAngle, isArc, isCircle, isLine, isPolygon, isPolyline, isRay, isRectangle, isSector, isSegment} from './types';
+import {isAngle, isArc, isCircle, isEllipse, isLine, isPolygon, isPolyline, isRay, isRectangle, isSector, isSegment} from './types';
 import {GeoElement} from './utilities';
 
 
@@ -142,8 +143,14 @@ export function drawSVG(obj: GeoElement, options: SVGDrawingOptions = {}): strin
   }
 
   if (isCircle(obj)) {
-    return `M ${obj.c.x - obj.r} ${obj.c.y} a ${obj.r},${obj.r} 0 1 0 ` +
-           `${2 * obj.r} 0 a ${obj.r} ${obj.r} 0 1 0 ${-2 * obj.r} 0`;
+    return `M${obj.c.x - obj.r} ${obj.c.y}a${obj.r},${obj.r} 0 1 0 ` +
+           `${2 * obj.r} 0a${obj.r} ${obj.r} 0 1 0 ${-2 * obj.r} 0Z`;
+  }
+
+  if (isEllipse(obj)) {
+    const [u, v] = obj.majorVertices;
+    const rot = toDeg(obj.angle);
+    return `M${u.x} ${u.y}A${obj.a} ${obj.b} ${rot} 0 0 ${v.x} ${v.y}A${obj.a} ${obj.b} ${rot} 0 0 ${u.x} ${u.y}Z`;
   }
 
   if (isArc(obj)) {
@@ -153,7 +160,7 @@ export function drawSVG(obj: GeoElement, options: SVGDrawingOptions = {}): strin
   }
 
   if (isSector(obj)) {
-    return `M ${obj.c.x} ${obj.c.y} L ${drawArc(obj.start, obj.c, obj.end)} Z`;
+    return `M${obj.c.x} ${obj.c.y} L ${drawArc(obj.start, obj.c, obj.end)}Z`;
   }
 
   if (isPolyline(obj)) {
