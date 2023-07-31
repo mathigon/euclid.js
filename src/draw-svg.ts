@@ -11,7 +11,7 @@ import {intersections} from './intersection';
 import {Line} from './line';
 import {Point} from './point';
 import {Rectangle} from './rectangle';
-import {isAngle, isArc, isCircle, isEllipse, isLine, isPolygon, isPolyline, isRay, isRectangle, isSector, isSegment} from './types';
+import {isAngle, isArc, isCircle, isEllipse, isLine, isPolygon, isPolyline, isRay, isRectangle, isRoundedRect, isSector, isSegment} from './types';
 import {GeoElement} from './utilities';
 
 
@@ -105,6 +105,15 @@ function drawArcArrows(x: Arc, type: LineArrow) {
   return path;
 }
 
+const p1 = 0.55192;
+const p2 = 1 - p1;
+export function drawRoundedRect(rect: Rectangle, radius: number[]) {
+  const [tl, tr, br, bl] = radius;  // top-left, top-right, btm-right, btm-left
+  const {p, w, h} = rect;
+  const wx = w - tl - tr;
+  return `M${p.x} ${p.y + tl}c0 ${-p1 * tl} ${p2 * tl} ${-tl} ${tl} ${-tl}h${wx}c${p1 * tr} 0 ${tr} ${p2 * tr} ${tr} ${tr}v${h - tr - br}c0 ${p1 * br} ${-p2 * br} ${br} ${-br} ${br}h${-wx}c${-p1 * bl} 0 ${-bl} ${-p2 * bl} ${-bl} ${-bl}Z`;
+}
+
 
 // -----------------------------------------------------------------------------
 // Draw Function
@@ -169,6 +178,12 @@ export function drawSVG(obj: GeoElement, options: SVGDrawingOptions = {}): strin
 
   if (isPolygon(obj)) {
     return `${drawPath(...obj.points)}Z`;
+  }
+
+  if (isRoundedRect(obj)) {
+    const rect = obj.unsigned;
+    const r = Math.min(obj.radius, rect.w / 2, rect.h / 2);
+    return drawRoundedRect(rect, [r, r, r, r]);
   }
 
   if (isRectangle(obj)) {

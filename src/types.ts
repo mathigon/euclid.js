@@ -11,12 +11,12 @@ import {Ellipse} from './ellipse';
 import {Line, Ray, Segment} from './line';
 import {Point} from './point';
 import {Polygon, Polyline} from './polygon';
-import {Rectangle} from './rectangle';
+import {Rectangle, RoundedRect} from './rectangle';
 import {GeoElement} from './utilities';
 
 
 export function isPolygonLike(shape: GeoElement): shape is Polygon|Rectangle {
-  return ['polygon', 'polyline', 'rectangle', 'triangle'].includes(shape.type);
+  return ['polygon', 'polyline', 'rectangle', 'rounded-rect', 'triangle'].includes(shape.type);
 }
 
 export function isPolygon(shape: GeoElement): shape is Polygon {
@@ -29,6 +29,10 @@ export function isPolyline(shape: GeoElement): shape is Polyline {
 
 export function isRectangle(shape: GeoElement): shape is Rectangle {
   return shape.type === 'rectangle';
+}
+
+export function isRoundedRect(shape: GeoElement): shape is RoundedRect {
+  return shape.type === 'rounded-rect';
 }
 
 export function isLineLike(shape: GeoElement): shape is Line|Ray|Segment {
