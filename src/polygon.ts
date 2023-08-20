@@ -18,6 +18,7 @@ import {findClosest, GeoShape, SimplePoint, TransformMatrix, TWO_PI} from './uti
 export class Polygon implements GeoShape {
   readonly type: string = 'polygon';
   readonly points: Point[];
+  readonly ['constructor']!: new (...points: Point[]) => this;
 
   constructor(...points: Point[]) {
     this.points = points;
@@ -84,7 +85,7 @@ export class Polygon implements GeoShape {
   get oriented(): this {
     if (this.signedArea >= 0) return this;
     const points = [...this.points].reverse();
-    return new (<any> this.constructor)(...points);
+    return new this.constructor(...points);
   }
 
   /** Cut this polygon along a line, and return multiple parts. */
@@ -229,29 +230,29 @@ export class Polygon implements GeoShape {
   // ---------------------------------------------------------------------------
 
   transform(m: TransformMatrix): this {
-    return new (<any> this.constructor)(...this.points.map(p => p.transform(m)));
+    return new this.constructor(...this.points.map(p => p.transform(m)));
   }
 
   /** Rotates this polygon by a given angle (in radians), optionally around point `center`. */
   rotate(a: number, center = ORIGIN): this {
     if (nearlyEquals(a, 0)) return this;
     const points = this.points.map(p => p.rotate(a, center));
-    return new (<any> this.constructor)(...points);
+    return new this.constructor(...points);
   }
 
   reflect(line: Line): this {
     const points = this.points.map(p => p.reflect(line));
-    return new (<any> this.constructor)(...points);
+    return new this.constructor(...points);
   }
 
   scale(sx: number, sy = sx): this {
     const points = this.points.map(p => p.scale(sx, sy));
-    return new (<any> this.constructor)(...points);
+    return new this.constructor(...points);
   }
 
   shift(x: number, y = x): this {
     const points = this.points.map(p => p.shift(x, y));
-    return new (<any> this.constructor)(...points);
+    return new this.constructor(...points);
   }
 
   translate(p: SimplePoint) {

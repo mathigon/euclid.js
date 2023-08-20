@@ -15,9 +15,9 @@ import {GeoShape, rad, SimplePoint, TransformMatrix, TWO_PI} from './utilities';
 /** An arc segment of a circle, with given center, start point and angle. */
 export class Arc implements GeoShape {
   readonly type: string = 'arc';
+  readonly ['constructor']!: new (c: Point, start: Point, angle: number) => this;
 
-  constructor(readonly c: Point, readonly start: Point,
-    readonly angle: number) {
+  constructor(readonly c: Point, readonly start: Point, readonly angle: number) {
   }
 
   get circle() {
@@ -37,17 +37,17 @@ export class Arc implements GeoShape {
   }
 
   contract(p: number): this {
-    return new (<any> this.constructor)(this.c, this.at(p / 2), this.angle * (1 - p));
+    return new this.constructor(this.c, this.at(p / 2), this.angle * (1 - p));
   }
 
   get minor(): this {
     if (this.angle <= Math.PI) return this;
-    return new (<any> this.constructor)(this.c, this.end, TWO_PI - this.angle);
+    return new this.constructor(this.c, this.end, TWO_PI - this.angle);
   }
 
   get major(): this {
     if (this.angle >= Math.PI) return this;
-    return new (<any> this.constructor)(this.c, this.end, TWO_PI - this.angle);
+    return new this.constructor(this.c, this.end, TWO_PI - this.angle);
   }
 
   get center() {
@@ -83,29 +83,29 @@ export class Arc implements GeoShape {
   // ---------------------------------------------------------------------------
 
   transform(m: TransformMatrix): this {
-    return new (<any> this.constructor)(this.c.transform(m),
+    return new this.constructor(this.c.transform(m),
       this.start.transform(m), this.angle);
   }
 
   /** Rotates this arc by a given angle (in radians), optionally around point `c`. */
   rotate(a: number, c = ORIGIN): this {
     if (nearlyEquals(a, 0)) return this;
-    return new (<any> this.constructor)(this.c.rotate(a, c),
+    return new this.constructor(this.c.rotate(a, c),
       this.start.rotate(a, c), this.angle);
   }
 
   reflect(l: Line): this {
-    return new (<any> this.constructor)(this.c.reflect(l),
+    return new this.constructor(this.c.reflect(l),
       this.start.reflect(l), this.angle);
   }
 
   scale(sx: number, sy = sx): this {
-    return new (<any> this.constructor)(this.c.scale(sx, sy),
+    return new this.constructor(this.c.scale(sx, sy),
       this.start.scale(sx, sy), this.angle);
   }
 
   shift(x: number, y = x): this {
-    return new (<any> this.constructor)(this.c.shift(x, y),
+    return new this.constructor(this.c.shift(x, y),
       this.start.shift(x, y), this.angle);
   }
 

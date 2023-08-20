@@ -127,7 +127,7 @@ export class Ellipse implements GeoShape {
       .rotate(this.angle, this.c);
   }
 
-  offset(p: Point) {
+  offset(_p: Point) {
     // TODO Implement
     return 0.5;
   }
