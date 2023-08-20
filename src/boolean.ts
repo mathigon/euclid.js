@@ -116,6 +116,8 @@ type Status = {ev: Node<Event>};
 // Linked List
 
 class LinkedList<T> {
+  // TODO Better types without any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   root: any = {root: true, next: undefined};
 
   exists(node: Node<T>) {
@@ -430,6 +432,9 @@ function segmentChainer(segments: Segment[]) {
     // Search for two chains that this segment matches.
     const firstMatch = {index: 0, matchesHead: false, matchesPt1: false};
     const secondMatch = {index: 0, matchesHead: false, matchesPt1: false};
+
+    // TODO Better types without any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let nextMatch: any = firstMatch;
 
     function setMatch(index: number, matchesHead: boolean, matchesPt1: boolean) {

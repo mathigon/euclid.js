@@ -14,6 +14,7 @@ import {GeoShape, rad, SimplePoint, TransformMatrix} from './utilities';
 export class Line implements GeoShape {
   readonly type: string = 'line';
   flag?: number;
+  readonly ['constructor']!: new (p1: Point, p2: Point) => this;
 
   constructor(readonly p1: Point, readonly p2: Point) {}
 
@@ -127,25 +128,25 @@ export class Line implements GeoShape {
   // ---------------------------------------------------------------------------
 
   transform(m: TransformMatrix): this {
-    return new (<any> this.constructor)(this.p1.transform(m), this.p2.transform(m));
+    return new this.constructor(this.p1.transform(m), this.p2.transform(m));
   }
 
   /** Rotates this line by a given angle (in radians), optionally around point `c`. */
   rotate(a: number, c = ORIGIN): this {
     if (nearlyEquals(a, 0)) return this;
-    return new (<any> this.constructor)(this.p1.rotate(a, c), this.p2.rotate(a, c));
+    return new this.constructor(this.p1.rotate(a, c), this.p2.rotate(a, c));
   }
 
   reflect(l: Line): this {
-    return new (<any> this.constructor)(this.p1.reflect(l), this.p2.reflect(l));
+    return new this.constructor(this.p1.reflect(l), this.p2.reflect(l));
   }
 
   scale(sx: number, sy = sx) {
-    return new (<any> this.constructor)(this.p1.scale(sx, sy), this.p2.scale(sx, sy));
+    return new this.constructor(this.p1.scale(sx, sy), this.p2.scale(sx, sy));
   }
 
   shift(x: number, y = x) {
-    return new (<any> this.constructor)(this.p1.shift(x, y), this.p2.shift(x, y));
+    return new this.constructor(this.p1.shift(x, y), this.p2.shift(x, y));
   }
 
   translate(p: SimplePoint) {

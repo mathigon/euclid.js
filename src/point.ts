@@ -8,6 +8,7 @@ import {total} from '@mathigon/core';
 import {clamp, lerp, nearlyEquals, Random, roundTo, square} from '@mathigon/fermat';
 import {Bounds} from './bounds';
 import {Line} from './line';
+import {isPoint} from './types';
 import {GeoElement, rad, SimplePoint, TransformMatrix} from './utilities';
 
 
@@ -210,9 +211,8 @@ export class Point implements GeoElement, SimplePoint {
     return this.shift(p.x, p.y);  // Alias for .add()
   }
 
-  equals(other: any, precision?: number) {
-    // TODO Fix type signature for `other`
-    return Point.equals(this, other, precision);
+  equals(other: GeoElement|SimplePoint, precision?: number) {
+    return Point.equals(this, other as SimplePoint, precision);
   }
 
   toString() {
