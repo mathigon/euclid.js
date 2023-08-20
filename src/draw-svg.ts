@@ -11,7 +11,7 @@ import {intersections} from './intersection';
 import {Line} from './line';
 import {Point} from './point';
 import {Rectangle} from './rectangle';
-import {isAngle, isArc, isCircle, isEllipse, isLine, isPolygon, isPolyline, isRay, isRectangle, isRoundedRect, isSector, isSegment} from './types';
+import {isAngle, isArc, isCircle, isEllipse, isLine, isPolygon, isPolyline, isRay, isRectangle, isSector, isSegment} from './types';
 import {GeoElement} from './utilities';
 
 
@@ -19,12 +19,13 @@ export type LineMark = 'bar'|'bar2'|'arrow'|'arrow2';
 export type LineArrow = 'start'|'end'|'both';
 
 export interface SVGDrawingOptions {
-  round?: boolean;
-  size?: number;
-  fill?: string;
-  mark?: LineMark;
-  arrows?: LineArrow;
-  box?: Rectangle;
+  round?: boolean;  // For angles (round vs square right angles)
+  size?: number;  // For angles
+  fill?: string;  // For angles (stroke arc vs fill sector)
+  mark?: LineMark;  // For lines, rays, segments and arcs
+  arrows?: LineArrow;  // For segments and arcs
+  box?: Rectangle;  // For lines and rays (bounding box)
+  cornerRadius?: number;  // For rectangles and polygons
 }
 
 
@@ -105,13 +106,11 @@ function drawArcArrows(x: Arc, type: LineArrow) {
   return path;
 }
 
-const p1 = 0.55192;
-const p2 = 1 - p1;
-export function drawRoundedRect(rect: Rectangle, radius: number[]) {
-  const [tl, tr, br, bl] = radius;  // top-left, top-right, btm-right, btm-left
+// top-left, top-right, btm-right, btm-left corner radius
+export function drawRoundedRect(rect: Rectangle, tl: number, tr = tl, br = tl, bl = tr) {
   const {p, w, h} = rect;
   const wx = w - tl - tr;
-  return `M${p.x} ${p.y + tl}c0 ${-p1 * tl} ${p2 * tl} ${-tl} ${tl} ${-tl}h${wx}c${p1 * tr} 0 ${tr} ${p2 * tr} ${tr} ${tr}v${h - tr - br}c0 ${p1 * br} ${-p2 * br} ${br} ${-br} ${br}h${-wx}c${-p1 * bl} 0 ${-bl} ${-p2 * bl} ${-bl} ${-bl}Z`;
+  return `M${p.x} ${p.y + tl}a${tl} ${tl} 0 0 1 ${tl} ${-tl}h${wx}a${tr} ${tr} 0 0 1 ${tr} ${tr}v${h - tr - br}a${br} ${br} 0 0 1 ${-br} ${br}h${-wx}a${bl} ${bl} 0 0 1 ${-bl} ${-bl}Z`;
 }
 
 
@@ -177,17 +176,15 @@ export function drawSVG(obj: GeoElement, options: SVGDrawingOptions = {}): strin
   }
 
   if (isPolygon(obj)) {
+    // TODO Implement `options.cornerRadius`
     return `${drawPath(...obj.points)}Z`;
   }
 
-  if (isRoundedRect(obj)) {
-    const rect = obj.unsigned;
-    const r = Math.min(obj.radius, rect.w / 2, rect.h / 2);
-    return drawRoundedRect(rect, [r, r, r, r]);
-  }
-
   if (isRectangle(obj)) {
-    return `${drawPath(...obj.polygon.points)}Z`;
+    if (!options.cornerRadius) return `${drawPath(...obj.polygon.points)}Z`;
+    const rect = obj.unsigned;
+    const radius = Math.min(options.cornerRadius, rect.w / 2, rect.h / 2);
+    return drawRoundedRect(rect, radius);
   }
 
   return '';

@@ -14,7 +14,7 @@ import {GeoShape, SimplePoint, TransformMatrix} from './utilities';
 
 /** A rectangle, defined by its top left vertex, width and height. */
 export class Rectangle implements GeoShape {
-  readonly type: string = 'rectangle';
+  readonly type = 'rectangle';
 
   constructor(readonly p: Point, readonly w = 1, readonly h = w) {}
 
@@ -86,10 +86,6 @@ export class Rectangle implements GeoShape {
     return new Rectangle(this.p.shift(-left, -top), this.w + left + right, this.h + top + bottom);
   }
 
-  round(radius: number) {
-    return new RoundedRect(this.p, this.w, this.h, radius);
-  }
-
   get unsigned(): Rectangle {
     if (this.w > 0 && this.h > 0) return this;
     const p = this.p.shift(this.w < 0 ? this.w : 0, this.h < 0 ? this.h : 0);
@@ -157,23 +153,5 @@ export class Rectangle implements GeoShape {
 
   toString() {
     return `rectangle(${this.p},${this.w},${this.h})`;
-  }
-}
-
-/** A triangle defined by its three vertices. */
-export class RoundedRect extends Rectangle {
-  readonly type = 'rounded-rect';
-
-  constructor(p: Point, w = 1, h = w, readonly radius = 0) {
-    super(p, w, h);
-  }
-
-  scale(sx: number, sy = sx) {
-    const r1 = this.radius * (sx + sy) / 2;
-    return super.scale(sx, sy).round(r1);
-  }
-
-  shift(x: number, y = x) {
-    return super.shift(x, y).round(this.radius);
   }
 }
