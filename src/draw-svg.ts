@@ -109,8 +109,7 @@ function drawArcArrows(x: Arc, type: LineArrow) {
 // top-left, top-right, btm-right, btm-left corner radius
 export function drawRoundedRect(rect: Rectangle, tl: number, tr = tl, br = tl, bl = tr) {
   const {p, w, h} = rect;
-  const wx = w - tl - tr;
-  return `M${p.x} ${p.y + tl}a${tl} ${tl} 0 0 1 ${tl} ${-tl}h${wx}a${tr} ${tr} 0 0 1 ${tr} ${tr}v${h - tr - br}a${br} ${br} 0 0 1 ${-br} ${br}h${-wx}a${bl} ${bl} 0 0 1 ${-bl} ${-bl}Z`;
+  return `M${p.x} ${p.y + tl}a${tl} ${tl} 0 0 1 ${tl} ${-tl}h${w - tl - tr}a${tr} ${tr} 0 0 1 ${tr} ${tr}v${h - tr - br}a${br} ${br} 0 0 1 ${-br} ${br}h${-w + bl + br}a${bl} ${bl} 0 0 1 ${-bl} ${-bl}Z`;
 }
 
 
