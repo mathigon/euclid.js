@@ -6,7 +6,7 @@
 
 import {nearlyEquals} from '@mathigon/fermat';
 import tape from 'tape';
-import {Line, Point} from '../src';
+import {Line, Point, Segment} from '../src';
 
 
 tape('offset and projections', (test) => {
@@ -42,3 +42,13 @@ tape('line intercepts', (test) => {
 
   test.end();
 });
+
+tape('segment part', (test) => {
+  const a = new Segment(new Point(1, 1), new Point(2, 2));
+  const b = a.part(0.25, 0.75);
+  test.true(b.p1.equals(new Point(1.25, 1.25)));
+  test.true(b.p2.equals(new Point(1.75, 1.75)));
+
+  test.end();
+});
+
