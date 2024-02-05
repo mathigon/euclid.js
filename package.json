@@ -39,10 +39,10 @@
     "@types/tape": "5.6.4",
     "@typescript-eslint/eslint-plugin": "6.19.0",
     "@typescript-eslint/parser": "6.19.0",
-    "esbuild": "0.19.11",
+    "esbuild": "0.20.0",
     "eslint": "8.56.0",
     "eslint-plugin-import": "2.29.1",
-    "tape": "5.7.3",
+    "tape": "5.7.4",
     "ts-node": "10.9.2",
     "tslib": "2.6.2",
     "typescript": "5.3.3"
