@@ -5,7 +5,7 @@
 
 
 import tape from 'tape';
-import {Line, Point, Polygon, Polyline} from '../src';
+import {Circle, Line, Point, Polygon, Polyline} from '../src';
 
 
 const poly = (...p: number[][]) => new Polygon(...p.map(q => new Point(q[0], q[1])));
@@ -52,3 +52,11 @@ tape('Cutting', (test) => {
 
   test.end();
 });
+
+tape('From', (test) => {
+  const circle = new Circle(new Point(0, 0), 1);
+  const p = points(Polygon.from(circle, 4));
+  test.deepEqual(p, [[1, 0], [6.123233995736766e-17, 1], [-1, 1.2246467991473532e-16], [-1.8369701987210297e-16, -1]]);
+
+  test.end();
+})
