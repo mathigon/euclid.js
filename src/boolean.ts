@@ -17,7 +17,8 @@ import {Point} from './point';
 // -----------------------------------------------------------------------------
 // Utility Functions
 
-const PRECISION = 0.001;
+const DEFAULT_PRECISION = 0.000001;
+let PRECISION = DEFAULT_PRECISION;
 
 function pointAboveOrOnLine(pt: Point, left: Point, right: Point) {
   const d1 = (right.x - left.x) * (pt.y - left.y);
@@ -46,8 +47,8 @@ function pointBetween(p: Point, left: Point, right: Point) {
 
 function pointsCompare(p1: Point, p2: Point) {
   // returns -1 if p1 is smaller, 1 if p2 is smaller, 0 if equal
-  if (nearlyEquals(p1.x, p2.x)) {
-    return nearlyEquals(p1.y, p2.y) ? 0 : (p1.y < p2.y ? -1 : 1);
+  if (nearlyEquals(p1.x, p2.x, PRECISION)) {
+    return nearlyEquals(p1.y, p2.y, PRECISION) ? 0 : (p1.y < p2.y ? -1 : 1);
   }
   return p1.x < p2.x ? -1 : 1;
 }
@@ -60,11 +61,12 @@ function pointsCompare(p1: Point, p2: Point) {
  *   1: intersection point is directly on segment's second point
  *   2: intersection point is after segment's second point
  */
-function getOffset(A: number): -2|-1|0|1|2 {
-  if (A <= -PRECISION) return -2;
-  if (A < PRECISION) return -1;
-  if (A - 1 <= -PRECISION) return 0;
-  if (A - 1 < PRECISION) return 1;
+function getOffset(A: number, length: number): -2|-1|0|1|2 {
+  const precision = PRECISION / length;
+  if (A <= -precision) return -2;
+  if (A < precision) return -1;
+  if (A - 1 <= -precision) return 0;
+  if (A - 1 < precision) return 1;
   return 2;
 }
 
@@ -75,15 +77,17 @@ function linesIntersect(a0: Point, a1: Point, b0: Point, b1: Point) {
   const bdy = b1.y - b0.y;
 
   const axb = adx * bdy - ady * bdx;
-  if (nearlyEquals(axb, 0)) return false;  // lines are coincident
+  if (nearlyEquals(axb, 0, PRECISION)) return false;  // lines are coincident
 
   const dx = a0.x - b0.x;
   const dy = a0.y - b0.y;
   const A = (bdx * dy - bdy * dx) / axb;
   const B = (adx * dy - ady * dx) / axb;
+  const aLength = Math.hypot(adx, ady);
+  const bLength = Math.hypot(bdx, bdy);
 
   const pt = new Point(a0.x + A * adx, a0.y + A * ady);
-  return {alongA: getOffset(A), alongB: getOffset(B), pt};
+  return {alongA: getOffset(A, aLength), alongB: getOffset(B, bLength), pt};
 }
 
 
@@ -193,7 +197,7 @@ function eventCompare(p1isStart: boolean, p11: Point, p12: Point, p2isStart: boo
   if (comp !== 0) return comp;  // the selected points are the same
 
   // If the non-selected points are the same too then the segments are equal.
-  if (Point.equals(p12, p22)) return 0;
+  if (Point.equals(p12, p22, PRECISION)) return 0;
 
   // If one is a start and the other isn't favor the one that isn't the start.
   if (p1isStart !== p2isStart) return p1isStart ? 1 : -1;
@@ -245,8 +249,8 @@ function statusCompare(ev1: Node<Event>, ev2: Node<Event>) {
   const b1 = ev2.seg.start;
   const b2 = ev2.seg.end;
 
-  if (!Point.colinear(a1, b1, b2)) return pointAboveOrOnLine(a1, b1, b2) ? 1 : -1;
-  if (!Point.colinear(a2, b1, b2)) return pointAboveOrOnLine(a2, b1, b2) ? 1 : -1;
+  if (!Point.colinear(a1, b1, b2, PRECISION)) return pointAboveOrOnLine(a1, b1, b2) ? 1 : -1;
+  if (!Point.colinear(a2, b1, b2, PRECISION)) return pointAboveOrOnLine(a2, b1, b2) ? 1 : -1;
   return 1;
 }
 
@@ -265,11 +269,11 @@ function checkIntersection(eventRoot: LinkedList<Event>, ev1: Node<Event>, ev2: 
     // Segments are parallel or coincident. If points aren't collinear, then
     // the segments are parallel, so no intersections. Otherwise, segments are
     // on top of each other somehow (aka coincident)
-    if (!Point.colinear(a1, a2, b1)) return false;
-    if (Point.equals(a1, b2) || Point.equals(a2, b1)) return false;
+    if (!Point.colinear(a1, a2, b1, PRECISION)) return false;
+    if (Point.equals(a1, b2, PRECISION) || Point.equals(a2, b1, PRECISION)) return false;
 
-    const a1isb1 = Point.equals(a1, b1);
-    const a2isb2 = Point.equals(a2, b2);
+    const a1isb1 = Point.equals(a1, b1, PRECISION);
+    const a2isb2 = Point.equals(a2, b2, PRECISION);
 
     if (a1isb1 && a2isb2) return ev2;  // Segments are exactly equal
 
@@ -427,7 +431,7 @@ function segmentChainer(segments: Segment[]) {
   segments.forEach((seg) => {
     const pt1 = seg.start;
     const pt2 = seg.end;
-    if (Point.equals(pt1, pt2)) return;  // Zero-length segment: maybe PRECISION is too small or too large!
+    if (Point.equals(pt1, pt2, PRECISION)) return;  // Zero-length segment: maybe PRECISION is too small or too large!
 
     // Search for two chains that this segment matches.
     const firstMatch = {index: 0, matchesHead: false, matchesPt1: false};
@@ -450,13 +454,13 @@ function segmentChainer(segments: Segment[]) {
       const chain = chains[i];
       const head = chain[0];
       const tail = last(chain);
-      if (Point.equals(head, pt1)) {
+      if (Point.equals(head, pt1, PRECISION)) {
         if (setMatch(i, true, true)) break;
-      } else if (Point.equals(head, pt2)) {
+      } else if (Point.equals(head, pt2, PRECISION)) {
         if (setMatch(i, true, false)) break;
-      } else if (Point.equals(tail, pt1)) {
+      } else if (Point.equals(tail, pt1, PRECISION)) {
         if (setMatch(i, false, true)) break;
-      } else if (Point.equals(tail, pt2)) {
+      } else if (Point.equals(tail, pt2, PRECISION)) {
         if (setMatch(i, false, false)) break;
       }
     }
@@ -481,17 +485,17 @@ function segmentChainer(segments: Segment[]) {
       const oppo = addToHead ? chain[chain.length - 1] : chain[0];
       const oppo2 = addToHead ? chain[chain.length - 2] : chain[1];
 
-      if (Point.colinear(grow2, grow, pt)) {
+      if (Point.colinear(grow2, grow, pt, PRECISION)) {
         // Grow isn't needed because it's directly between grow2 and pt.
         addToHead ? chain.shift() : chain.pop();
         grow = grow2; // Old grow is gone... new grow is what grow2 was.
       }
 
-      if (Point.equals(oppo, pt)) {
+      if (Point.equals(oppo, pt, PRECISION)) {
         // We're closing the loop, so remove chain from chains.
         chains.splice(index, 1);
 
-        if (Point.colinear(oppo2, oppo, grow)) {
+        if (Point.colinear(oppo2, oppo, grow, PRECISION)) {
           // Oppo isn't needed because it's directly between oppo2 and grow.
           addToHead ? chain.pop() : chain.shift();
         }
@@ -520,13 +524,13 @@ function segmentChainer(segments: Segment[]) {
       const head = chain2[0];
       const head2 = chain2[1];
 
-      if (Point.colinear(tail2, tail, head)) {
+      if (Point.colinear(tail2, tail, head, PRECISION)) {
         // Tail isn't needed because it's directly between tail2 and head
         chain1.pop();
         tail = tail2; // old tail is gone... new tail is what tail2 was
       }
 
-      if (Point.colinear(tail, head, head2)) {
+      if (Point.colinear(tail, head, head2, PRECISION)) {
         // Head isn't needed because it's directly between tail and head2
         chain2.shift();
       }
@@ -613,13 +617,15 @@ function segments(poly: MultiPolygon) {
   return calculate(root, true);
 }
 
-function operate(poly1: MultiPolygon, poly2: MultiPolygon, selection: number[]) {
+function operate(poly1: MultiPolygon, poly2: MultiPolygon, selection: number[], precision?: number) {
+  if (precision !== undefined) PRECISION = precision;
   const root = new LinkedList<Event>();
   for (const s of segments(poly1)) addSegment(root, copy(s.start, s.end, s), true);
   for (const s of segments(poly2)) addSegment(root, copy(s.start, s.end, s), false);
 
-  const results = select(calculate(root, false), selection);
-  return segmentChainer(results);
+  const results = segmentChainer(select(calculate(root, false), selection));
+  PRECISION = DEFAULT_PRECISION;
+  return results;
 }
 
 
@@ -633,7 +639,7 @@ const INTERSECT = [0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 1, 1, 0, 2, 1, 0];
 const DIFFERENCE = [0, 0, 0, 0, 2, 0, 2, 0, 1, 1, 0, 0, 0, 1, 2, 0];
 const XOR = [0, 2, 1, 0, 2, 0, 0, 1, 1, 0, 0, 2, 0, 1, 2, 0];
 
-export const union = (p1: MultiPolygon, p2: MultiPolygon) => operate(p1, p2, UNION);
-export const intersect = (p1: MultiPolygon, p2: MultiPolygon) => operate(p1, p2, INTERSECT);
-export const difference = (p1: MultiPolygon, p2: MultiPolygon) => operate(p1, p2, DIFFERENCE);
-export const xor = (p1: MultiPolygon, p2: MultiPolygon) => operate(p1, p2, XOR);
+export const union = (p1: MultiPolygon, p2: MultiPolygon, precision?: number) => operate(p1, p2, UNION, precision);
+export const intersect = (p1: MultiPolygon, p2: MultiPolygon, precision?: number) => operate(p1, p2, INTERSECT, precision);
+export const difference = (p1: MultiPolygon, p2: MultiPolygon, precision?: number) => operate(p1, p2, DIFFERENCE, precision);
+export const xor = (p1: MultiPolygon, p2: MultiPolygon, precision?: number) => operate(p1, p2, XOR, precision);

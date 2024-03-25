@@ -5,7 +5,7 @@
 
 
 import tape from 'tape';
-import {difference, intersect, union, xor} from '../src/boolean';
+import {difference, intersect, Polygon, union, xor} from '../src';
 import {Point} from '../src';
 
 
@@ -44,6 +44,19 @@ tape('compound polygons', (test) => {
     [[178, 80], [130, 50], [130, 130], [150, 150]],
     [[178, 80], [190, 50], [260, 50], [260, 131.25]]
   ]);
+
+  test.end();
+});
+
+tape('intersections', (test) => {
+  const hexagon = Polygon.regular(6, 100);
+  const result = Polygon.intersection([hexagon, hexagon]);
+  test.equal(hexagon.area, result[0].area);
+
+  const p1 = new Polygon(new Point(340, 300), new Point(341.95, 210), new Point(360, 250));
+  const p2 = new Polygon(new Point(340, 300), new Point(341.953125, 210), new Point(360, 250));
+  const r2 = Polygon.intersection([p1, p2]);
+  test.equal(r2.length, 1);
 
   test.end();
 });
