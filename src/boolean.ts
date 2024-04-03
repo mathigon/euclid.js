@@ -625,7 +625,7 @@ function operate(poly1: MultiPolygon, poly2: MultiPolygon, selection: number[], 
 
   const results = segmentChainer(select(calculate(root, false), selection));
   PRECISION = DEFAULT_PRECISION;
-  return results;
+  return results.filter(polygon => polygon.length > 2);
 }
 
 
