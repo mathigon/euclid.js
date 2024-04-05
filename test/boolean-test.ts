@@ -7,6 +7,7 @@
 import tape from 'tape';
 import {difference, intersect, Polygon, union, xor} from '../src';
 import {Point} from '../src';
+import {total} from '@mathigon/core';
 
 
 const poly = (...p: number[][]) => p.map(q => new Point(q[0], q[1]));
@@ -57,6 +58,25 @@ tape('intersections', (test) => {
   const p2 = new Polygon(new Point(340, 300), new Point(341.953125, 210), new Point(360, 250));
   const r2 = Polygon.intersection([p1, p2]);
   test.equal(r2.length, 1);
+
+  // Minimally overlapping triangles
+  // If useRound is false this produces a zero segment error!
+  const t1 = new Polygon(new Point(630.64, 783.64), new Point(655.64, 826.941270189222), new Point(680.64, 783.64));
+  const t2 = new Polygon(new Point(630.64, 783.6412701892219), new Point(655.64, 740.34), new Point(680.64, 783.6412701892219));
+  const i1 = Polygon.intersection([t1, t2], undefined, true);
+  test.equal(i1.length, 0);
+
+  test.end();
+});
+
+tape('unions', (test) => {
+  // if you change useRound to true on this union it will produce a zero segment error.
+  const polyList = [
+    new Polygon(new Point(1167.2641162274222, 3633.834721294776), new Point(1342.2641162274222, 3330.7258299702225), new Point(1167.2641162274222, 3330.7258299702225), new Point(1079.7641162274222, 3482.2802756324995)),
+    new Polygon(new Point(1692.26, 3936.95), new Point(1342.26, 3936.94), new Point(1254.76, 4088.49), new Point(1079.76, 4088.49), new Point(992.26, 3936.94), new Point(992.27, 3936.94), new Point(1167.26, 3633.83), new Point(1167.2636603221083, 3633.8336603221082), new Point(1342.26, 3330.74), new Point(1517.2542265184259, 3633.84), new Point(1692.26, 3633.84), new Point(1779.76, 3785.39))
+  ];
+  const badUnion = Polygon.union(polyList, undefined, false);
+  test.equal(Math.abs(total(badUnion.map(u => u.area)) - total(polyList.map(u => u.area))) < 1, true);
 
   test.end();
 });

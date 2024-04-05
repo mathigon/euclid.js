@@ -118,16 +118,16 @@ export class Polygon implements GeoShape {
     return false;
   }
 
-  static union(polygons: Polygon[], precision?: number): Polygon[] {
+  static union(polygons: Polygon[], precision?: number, useRound?: boolean): Polygon[] {
     const [first, ...other] = polygons;
     if (!other.length) return [first];
 
     const p1 = [first.points];
-    const p2 = other.length > 1 ? Polygon.union(other, precision).map(p => p.points) : [polygons[1].points];
-    return union(p1, p2, precision).map(p => new Polygon(...p));
+    const p2 = other.length > 1 ? Polygon.union(other, precision, useRound).map(p => p.points) : [polygons[1].points];
+    return union(p1, p2, precision, useRound).map(p => new Polygon(...p));
   }
 
-  static intersection(polygons: Polygon[], precision?: number): Polygon[] {
+  static intersection(polygons: Polygon[], precision?: number, useRound?: boolean): Polygon[] {
     const [first, ...other] = polygons;
     if (!other.length) return [first];
 
@@ -136,16 +136,16 @@ export class Polygon implements GeoShape {
     for (const poly of other) {
       const p1 = intersection;
       const p2 = [poly.points];
-      intersection = intersect(p1, p2, precision);
+      intersection = intersect(p1, p2, precision, useRound);
       if (!intersection.length) return [];
     }
 
     return intersection.map(p => new Polygon(...p));
   }
 
-  static difference(p1: Polygon, p2: Polygon, precision?: number): Polygon[] {
-    const poly12 = difference([p1.points], [p2.points], precision);
-    const poly21 = difference([p2.points], [p1.points], precision);
+  static difference(p1: Polygon, p2: Polygon, precision?: number, useRound?: boolean): Polygon[] {
+    const poly12 = difference([p1.points], [p2.points], precision, useRound);
+    const poly21 = difference([p2.points], [p1.points], precision, useRound);
     return poly12.concat(poly21).map(p => new Polygon(...p));
   }
 

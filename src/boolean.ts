@@ -5,7 +5,7 @@
 
 
 import {last} from '@mathigon/core';
-import {nearlyEquals} from '@mathigon/fermat';
+import {nearlyEquals, round} from '@mathigon/fermat';
 import {Point} from './point';
 
 // Based on https://github.com/velipso/polybooljs (MIT License)
@@ -617,11 +617,16 @@ function segments(poly: MultiPolygon) {
   return calculate(root, true);
 }
 
-function operate(poly1: MultiPolygon, poly2: MultiPolygon, selection: number[], precision?: number) {
+function roundPoint(point: Point, useRound?: boolean, precision = 2) {
+  if (!useRound) return point;
+  return new Point(round(point.x, precision), round(point.y, precision));
+}
+
+function operate(poly1: MultiPolygon, poly2: MultiPolygon, selection: number[], precision?: number, useRound?: boolean) {
   if (precision !== undefined) PRECISION = precision;
   const root = new LinkedList<Event>();
-  for (const s of segments(poly1)) addSegment(root, copy(s.start, s.end, s), true);
-  for (const s of segments(poly2)) addSegment(root, copy(s.start, s.end, s), false);
+  for (const s of segments(poly1)) addSegment(root, copy(roundPoint(s.start, useRound), roundPoint(s.end, useRound), s), true);
+  for (const s of segments(poly2)) addSegment(root, copy(roundPoint(s.start, useRound), roundPoint(s.end, useRound), s), false);
 
   const results = segmentChainer(select(calculate(root, false), selection));
   PRECISION = DEFAULT_PRECISION;
@@ -639,7 +644,7 @@ const INTERSECT = [0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 1, 1, 0, 2, 1, 0];
 const DIFFERENCE = [0, 0, 0, 0, 2, 0, 2, 0, 1, 1, 0, 0, 0, 1, 2, 0];
 const XOR = [0, 2, 1, 0, 2, 0, 0, 1, 1, 0, 0, 2, 0, 1, 2, 0];
 
-export const union = (p1: MultiPolygon, p2: MultiPolygon, precision?: number) => operate(p1, p2, UNION, precision);
-export const intersect = (p1: MultiPolygon, p2: MultiPolygon, precision?: number) => operate(p1, p2, INTERSECT, precision);
-export const difference = (p1: MultiPolygon, p2: MultiPolygon, precision?: number) => operate(p1, p2, DIFFERENCE, precision);
-export const xor = (p1: MultiPolygon, p2: MultiPolygon, precision?: number) => operate(p1, p2, XOR, precision);
+export const union = (p1: MultiPolygon, p2: MultiPolygon, precision?: number, useRound?: boolean) => operate(p1, p2, UNION, precision, useRound);
+export const intersect = (p1: MultiPolygon, p2: MultiPolygon, precision?: number, useRound?: boolean) => operate(p1, p2, INTERSECT, precision, useRound);
+export const difference = (p1: MultiPolygon, p2: MultiPolygon, precision?: number, useRound?: boolean) => operate(p1, p2, DIFFERENCE, precision, useRound);
+export const xor = (p1: MultiPolygon, p2: MultiPolygon, precision?: number, useRound?: boolean) => operate(p1, p2, XOR, precision, useRound);
