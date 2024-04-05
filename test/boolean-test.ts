@@ -7,7 +7,7 @@
 import tape from 'tape';
 import {difference, intersect, Polygon, union, xor} from '../src';
 import {Point} from '../src';
-import {total} from "@mathigon/core";
+import {total} from '@mathigon/core';
 
 
 const poly = (...p: number[][]) => p.map(q => new Point(q[0], q[1]));
