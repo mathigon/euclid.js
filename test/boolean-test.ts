@@ -94,6 +94,7 @@ tape('unions', (test) => {
     new Polygon(new Point(1692.26, 3936.95), new Point(1342.26, 3936.94), new Point(1254.76, 4088.49), new Point(1079.76, 4088.49), new Point(992.26, 3936.94), new Point(992.27, 3936.94), new Point(1167.26, 3633.83), new Point(1167.2636603221083, 3633.8336603221082), new Point(1342.26, 3330.74), new Point(1517.2542265184259, 3633.84), new Point(1692.26, 3633.84), new Point(1779.76, 3785.39))
   ];
   const badUnion = Polygon.union(polyList, undefined, false);
+  test.equal(Math.abs(total(badUnion.map(u => u.area)) - total(polyList.map(u => u.area))) < 1, true);
 
   test.end();
 });
