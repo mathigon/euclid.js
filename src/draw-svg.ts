@@ -18,6 +18,7 @@ import {GeoElement} from './utilities';
 
 export type LineMark = 'bar'|'bar2'|'arrow'|'arrow2';
 export type LineArrow = 'start'|'end'|'both';
+const CIRCLE_MAGIC = 4*(Math.sqrt(2)-1)/3;
 
 export interface SVGDrawingOptions {
   round?: boolean;  // For angles (round vs square right angles)
@@ -109,13 +110,16 @@ function drawArcArrows(x: Arc, type: LineArrow) {
 
 function getCornerOffset(points: Point[], radius: number) {
 
-  const d1 = Point.distance(points[0], points[1]);
-  const d2 = Point.distance(points[1], points[2]);
+  const d1 = radius/Point.distance(points[0], points[1]);
+  const d2 = radius/Point.distance(points[1], points[2]);
+  const shift = 1 - CIRCLE_MAGIC;
 
-  const p1 = Point.interpolate(points[0], points[1], clamp(1 - radius/d1, 0, 1));
-  const p2 = Point.interpolate(points[1], points[2], clamp(radius/d2, 0, 1));
+  const p1 = Point.interpolate(points[0], points[1], clamp(1 - d1, 0, 1));
+  const p2 = Point.interpolate(points[1], points[2], clamp(d2, 0, 1));
+  const p3 = Point.interpolate(points[0], points[1], clamp(1 - d1*shift, 0, 1));
+  const p4 = Point.interpolate(points[1], points[2], clamp(d2*shift, 0, 1));
 
-  return [p1, p2].map(p => `${p.x.toFixed(2)} ${p.y.toFixed(2)}`);
+  return [p1, p2, p3, p4].map(p => `${p.x.toFixed(2)} ${p.y.toFixed(2)}`);
 }
 
 function drawRoundedPath(points: Point[], radius: number, close = false) {
@@ -159,8 +163,7 @@ function drawRoundedPath(points: Point[], radius: number, close = false) {
 
       // move to a point on the line that is radius away from the end point
       // draw a quadratic curve to the other offset, using the handle as a control point.
-      const i = (index+1) % points.length;
-      path += `L${offsets[0]}Q${points[i].x} ${points[i].y} ${offsets[1]}`;
+      path += `L${offsets[0]}C${offsets[2]} ${offsets[3]} ${offsets[1]}`;
 
     } else if (index === points.length - 2 && !close) {
       // on the last move, just draw a line.
@@ -241,7 +244,10 @@ export function drawSVG(obj: GeoElement, options: SVGDrawingOptions = {}): strin
   }
 
   if (isPolygon(obj) || (isRectangle(obj) && options.cornerRadius)) {
-    if (options.cornerRadius) return drawRoundedPath(obj.points, options.cornerRadius, true);
+    if (options.cornerRadius) {
+      console.log('corner radius');
+      return drawRoundedPath(obj.points, options.cornerRadius, true);
+    }
     return `${drawPath(...obj.points)}Z`;
   }
 
