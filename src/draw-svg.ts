@@ -5,6 +5,7 @@
 
 
 import {isOneOf} from '@mathigon/core';
+import {clamp} from '@mathigon/fermat';
 import {toDeg} from './angle';
 import {Arc} from './arc';
 import {intersections} from './intersection';
@@ -106,6 +107,70 @@ function drawArcArrows(x: Arc, type: LineArrow) {
   return path;
 }
 
+function getCornerOffset(points: Point[], radius: number) {
+
+  const d1 = Point.distance(points[0], points[1]);
+  const d2 = Point.distance(points[1], points[2]);
+
+  const p1 = Point.interpolate(points[0], points[1], clamp(1 - radius/d1, 0, 1));
+  const p2 = Point.interpolate(points[1], points[2], clamp(radius/d2, 0, 1));
+
+  return [p1, p2].map(p => `${p.x.toFixed(2)} ${p.y.toFixed(2)}`);
+}
+
+function drawRoundedPath(points: Point[], radius: number, close = false) {
+  if (radius < 0) radius = 0;
+  let path = 'M';
+
+  let first: string;
+
+  if (!close) {
+    first = `${points[0].x} ${points[0].y}`;
+  } else {
+    const p1 = points[points.length - 1];
+    const p2 = points[0];
+    const p3 = points[1];
+
+    // Compute segment distances to adjust radius.
+    const d1 = Math.max(0.1, Point.distance(p1, p2)/2);
+    const d2 = Math.max(0.1, Point.distance(p2, p3)/2);
+
+    // Get points radius away from the next vertex on each line.
+    const offsets = getCornerOffset([p1, p2, p3], Math.min(radius, d1, d2));
+
+    first = offsets[1];
+  }
+
+  path += first; // move to the first point
+
+
+  for (let index = 0; index < points.length; index++) {
+    if (index < points.length - 2 || close) {
+      const p1 = points[index];
+      const p2 = points[(index + 1) % points.length];
+      const p3 = points[(index + 2) % points.length];
+
+      // Compute segment distances to adjust radius.
+      const d1 = Math.max(0.1, Point.distance(p1, p2)/2);
+      const d2 = Math.max(0.1, Point.distance(p2, p3)/2);
+
+      // Get points radius away from the next vertex on each line.
+      const offsets = getCornerOffset([p1, p2, p3], Math.min(radius, d1, d2));
+
+      // move to a point on the line that is radius away from the end point
+      // draw a quadratic curve to the other offset, using the handle as a control point.
+      const i = (index+1) % points.length;
+      path += `L${offsets[0]}Q${points[i].x} ${points[i].y} ${offsets[1]}`;
+
+    } else if (index === points.length - 2 && !close) {
+      // on the last move, just draw a line.
+      path += `L${points[index + 1].x} ${points[index + 1].y}`;
+    }
+  }
+
+  return path;
+}
+
 // top-left, top-right, btm-right, btm-left corner radius
 export function drawRoundedRect(rect: Rectangle, tl: number, tr = tl, br = tl, bl = tr) {
   const {p, w, h} = rect;
@@ -171,19 +236,17 @@ export function drawSVG(obj: GeoElement, options: SVGDrawingOptions = {}): strin
   }
 
   if (isPolyline(obj)) {
+    if (options.cornerRadius) return drawRoundedPath(obj.points, options.cornerRadius, false);
     return drawPath(...obj.points);
   }
 
-  if (isPolygon(obj)) {
-    // TODO Implement `options.cornerRadius`
+  if (isPolygon(obj) || (isRectangle(obj) && options.cornerRadius)) {
+    if (options.cornerRadius) return drawRoundedPath(obj.points, options.cornerRadius, true);
     return `${drawPath(...obj.points)}Z`;
   }
 
   if (isRectangle(obj)) {
-    if (!options.cornerRadius) return `${drawPath(...obj.polygon.points)}Z`;
-    const rect = obj.unsigned;
-    const radius = Math.min(options.cornerRadius, rect.w / 2, rect.h / 2);
-    return drawRoundedRect(rect, radius);
+    return `${drawPath(...obj.polygon.points)}Z`;
   }
 
   return '';
