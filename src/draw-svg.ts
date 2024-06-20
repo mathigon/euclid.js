@@ -108,24 +108,31 @@ function drawArcArrows(x: Arc, type: LineArrow) {
   return path;
 }
 
-function getCornerOffset(points: Point[], radius: number) {
+export function getCornerOffset(points: Point[], radius: number, string = true) {
+  const length0 = Point.distance(points[0], points[1]);
+  const length1 = Point.distance(points[1], points[2]);
 
-  const d1 = radius/Point.distance(points[0], points[1]);
-  const d2 = radius/Point.distance(points[1], points[2]);
+  const r1 = Math.max(0.1, length0/2);
+  const r2 = Math.max(0.1, length1/2);
+  const rad = Math.min(radius, r1, r2);
+
+  const d1 = rad/length0;
+  const d2 = rad/length1;
   const shift = 1 - CIRCLE_MAGIC;
 
   const p1 = Point.interpolate(points[0], points[1], clamp(1 - d1, 0, 1));
   const p2 = Point.interpolate(points[1], points[2], clamp(d2, 0, 1));
   const p3 = Point.interpolate(points[0], points[1], clamp(1 - d1*shift, 0, 1));
   const p4 = Point.interpolate(points[1], points[2], clamp(d2*shift, 0, 1));
+  const offsets = [p1, p2, p3, p4];
 
-  return [p1, p2, p3, p4].map(p => `${p.x.toFixed(2)} ${p.y.toFixed(2)}`);
+  if (!string) return offsets;
+  return offsets.map(p => `${p.x.toFixed(2)} ${p.y.toFixed(2)}`);
 }
 
 function drawRoundedPath(points: Point[], radius: number, close = false) {
   if (radius < 0) radius = 0;
   let path = 'M';
-
   let first: string;
 
   if (!close) {
@@ -134,19 +141,11 @@ function drawRoundedPath(points: Point[], radius: number, close = false) {
     const p1 = points[points.length - 1];
     const p2 = points[0];
     const p3 = points[1];
-
-    // Compute segment distances to adjust radius.
-    const d1 = Math.max(0.1, Point.distance(p1, p2)/2);
-    const d2 = Math.max(0.1, Point.distance(p2, p3)/2);
-
-    // Get points radius away from the next vertex on each line.
-    const offsets = getCornerOffset([p1, p2, p3], Math.min(radius, d1, d2));
-
+    const offsets = getCornerOffset([p1, p2, p3], radius) as string[];
     first = offsets[1];
   }
 
   path += first; // move to the first point
-
 
   for (let index = 0; index < points.length; index++) {
     if (index < points.length - 2 || close) {
@@ -154,15 +153,11 @@ function drawRoundedPath(points: Point[], radius: number, close = false) {
       const p2 = points[(index + 1) % points.length];
       const p3 = points[(index + 2) % points.length];
 
-      // Compute segment distances to adjust radius.
-      const d1 = Math.max(0.1, Point.distance(p1, p2)/2);
-      const d2 = Math.max(0.1, Point.distance(p2, p3)/2);
-
       // Get points radius away from the next vertex on each line.
-      const offsets = getCornerOffset([p1, p2, p3], Math.min(radius, d1, d2));
+      const offsets = getCornerOffset([p1, p2, p3], radius);
 
-      // move to a point on the line that is radius away from the end point
-      // draw a quadratic curve to the other offset, using the handle as a control point.
+      // Draw a line that is radius away from the next handle
+      // Draw a cubic bezier using the other radius offset + the magic circle points.
       path += `L${offsets[0]}C${offsets[2]} ${offsets[3]} ${offsets[1]}`;
 
     } else if (index === points.length - 2 && !close) {
