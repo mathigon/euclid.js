@@ -18,6 +18,9 @@ import {GeoElement} from './utilities';
 
 export type LineMark = 'bar'|'bar2'|'arrow'|'arrow2';
 export type LineArrow = 'start'|'end'|'both';
+
+// Reference for CIRCLE_MAGIC
+// https://stackoverflow.com/questions/1734745/how-to-create-circle-with-b%C3%A9zier-curves
 const CIRCLE_MAGIC = 4*(Math.sqrt(2)-1)/3;
 
 export interface SVGDrawingOptions {
@@ -125,27 +128,23 @@ export function getBezierPoints(points: Point[], radius: number) {
   const p2 = Point.interpolate(points[0], points[1], clamp(1 - d1*shift, 0, 1));
   const p3 = Point.interpolate(points[1], points[2], clamp(d2*shift, 0, 1));
   const p4 = Point.interpolate(points[1], points[2], clamp(d2, 0, 1));
-  const offsets = [p1, p2, p3, p4];
 
-  return offsets;
+  return [p1, p2, p3, p4];
 }
 
 function drawRoundedPath(points: Point[], radius: number, close = false) {
   if (radius < 0) radius = 0;
   let path = 'M';
-  let first: string;
 
   if (!close) {
-    first = `${points[0].x} ${points[0].y}`;
+    path += `${points[0].x} ${points[0].y}`;
   } else {
     const p1 = points[points.length - 1];
     const p2 = points[0];
     const p3 = points[1];
     const offsets = getBezierPoints([p1, p2, p3], radius);
-    first = `${offsets[3].x} ${offsets[3].y}`;
+    path += `${offsets[3].x} ${offsets[3].y}`;
   }
-
-  path += first; // move to the first point
 
   for (let index = 0; index < points.length; index++) {
     if (index < points.length - 2 || close) {
