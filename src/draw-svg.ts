@@ -108,7 +108,8 @@ function drawArcArrows(x: Arc, type: LineArrow) {
   return path;
 }
 
-export function getCornerOffset(points: Point[], radius: number, string = true) {
+/** Returns the four Cubic Bezier points need to round off a corner */
+export function getBezierPoints(points: Point[], radius: number, string = true) {
   const length0 = Point.distance(points[0], points[1]);
   const length1 = Point.distance(points[1], points[2]);
 
@@ -121,13 +122,12 @@ export function getCornerOffset(points: Point[], radius: number, string = true) 
   const shift = 1 - CIRCLE_MAGIC;
 
   const p1 = Point.interpolate(points[0], points[1], clamp(1 - d1, 0, 1));
-  const p2 = Point.interpolate(points[1], points[2], clamp(d2, 0, 1));
-  const p3 = Point.interpolate(points[0], points[1], clamp(1 - d1*shift, 0, 1));
-  const p4 = Point.interpolate(points[1], points[2], clamp(d2*shift, 0, 1));
+  const p2 = Point.interpolate(points[0], points[1], clamp(1 - d1*shift, 0, 1));
+  const p3 = Point.interpolate(points[1], points[2], clamp(d2*shift, 0, 1));
+  const p4 = Point.interpolate(points[1], points[2], clamp(d2, 0, 1));
   const offsets = [p1, p2, p3, p4];
 
-  if (!string) return offsets;
-  return offsets.map(p => `${p.x.toFixed(2)} ${p.y.toFixed(2)}`);
+  return offsets;
 }
 
 function drawRoundedPath(points: Point[], radius: number, close = false) {
@@ -141,8 +141,8 @@ function drawRoundedPath(points: Point[], radius: number, close = false) {
     const p1 = points[points.length - 1];
     const p2 = points[0];
     const p3 = points[1];
-    const offsets = getCornerOffset([p1, p2, p3], radius) as string[];
-    first = offsets[1];
+    const offsets = getBezierPoints([p1, p2, p3], radius);
+    first = `${offsets[3].x} ${offsets[3].y}`;
   }
 
   path += first; // move to the first point
@@ -154,11 +154,11 @@ function drawRoundedPath(points: Point[], radius: number, close = false) {
       const p3 = points[(index + 2) % points.length];
 
       // Get points radius away from the next vertex on each line.
-      const offsets = getCornerOffset([p1, p2, p3], radius);
+      const offsets = getBezierPoints([p1, p2, p3], radius).map(p => `${p.x.toFixed(2)} ${p.y.toFixed(2)}`);
 
       // Draw a line that is radius away from the next handle
       // Draw a cubic bezier using the other radius offset + the magic circle points.
-      path += `L${offsets[0]}C${offsets[2]} ${offsets[3]} ${offsets[1]}`;
+      path += `L${offsets[0]}C${offsets[1]} ${offsets[2]} ${offsets[3]}`;
 
     } else if (index === points.length - 2 && !close) {
       // on the last move, just draw a line.
@@ -240,7 +240,6 @@ export function drawSVG(obj: GeoElement, options: SVGDrawingOptions = {}): strin
 
   if (isPolygon(obj) || (isRectangle(obj) && options.cornerRadius)) {
     if (options.cornerRadius) {
-      console.log('corner radius');
       return drawRoundedPath(obj.points, options.cornerRadius, true);
     }
     return `${drawPath(...obj.points)}Z`;
