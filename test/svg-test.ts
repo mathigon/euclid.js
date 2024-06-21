@@ -1,11 +1,11 @@
 // =============================================================================
-// Euclid.js | Polygon Tests
+// Euclid.js | SVG Tests
 // (c) Mathigon
 // =============================================================================
 
 
 import tape from 'tape';
-import {drawSVG, Line, Point, Polygon, Polyline} from '../src';
+import {drawSVG, Point, Polygon} from '../src';
 
 
 const poly = (...p: number[][]) => new Polygon(...p.map(q => new Point(q[0], q[1])));

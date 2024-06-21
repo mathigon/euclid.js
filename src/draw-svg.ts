@@ -109,7 +109,7 @@ function drawArcArrows(x: Arc, type: LineArrow) {
 }
 
 /** Returns the four Cubic Bezier points need to round off a corner */
-export function getBezierPoints(points: Point[], radius: number, string = true) {
+export function getBezierPoints(points: Point[], radius: number) {
   const length0 = Point.distance(points[0], points[1]);
   const length1 = Point.distance(points[1], points[2]);
 
