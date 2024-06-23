@@ -5,6 +5,7 @@
 
 
 import {isOneOf} from '@mathigon/core';
+import {clamp} from '@mathigon/fermat';
 import {toDeg} from './angle';
 import {Arc} from './arc';
 import {intersections} from './intersection';
@@ -17,6 +18,10 @@ import {GeoElement} from './utilities';
 
 export type LineMark = 'bar'|'bar2'|'arrow'|'arrow2';
 export type LineArrow = 'start'|'end'|'both';
+
+// Reference for CIRCLE_MAGIC
+// https://stackoverflow.com/questions/1734745/how-to-create-circle-with-b%C3%A9zier-curves
+const CIRCLE_MAGIC = 4*(Math.sqrt(2)-1)/3;
 
 export interface SVGDrawingOptions {
   round?: boolean;  // For angles (round vs square right angles)
@@ -106,6 +111,63 @@ function drawArcArrows(x: Arc, type: LineArrow) {
   return path;
 }
 
+/** Returns the four Cubic Bezier points need to round off a corner */
+export function getBezierPoints(points: Point[], radius: number) {
+  const length0 = Point.distance(points[0], points[1]);
+  const length1 = Point.distance(points[1], points[2]);
+
+  const r1 = Math.max(0.1, length0/2);
+  const r2 = Math.max(0.1, length1/2);
+  const rad = Math.min(radius, r1, r2);
+
+  const d1 = rad/length0;
+  const d2 = rad/length1;
+  const shift = 1 - CIRCLE_MAGIC;
+
+  const p1 = Point.interpolate(points[0], points[1], clamp(1 - d1, 0, 1));
+  const p2 = Point.interpolate(points[0], points[1], clamp(1 - d1*shift, 0, 1));
+  const p3 = Point.interpolate(points[1], points[2], clamp(d2*shift, 0, 1));
+  const p4 = Point.interpolate(points[1], points[2], clamp(d2, 0, 1));
+
+  return [p1, p2, p3, p4];
+}
+
+function drawRoundedPath(points: Point[], radius: number, close = false) {
+  if (radius < 0) radius = 0;
+  let path = 'M';
+
+  if (!close) {
+    path += `${points[0].x} ${points[0].y}`;
+  } else {
+    const p1 = points[points.length - 1];
+    const p2 = points[0];
+    const p3 = points[1];
+    const offsets = getBezierPoints([p1, p2, p3], radius);
+    path += `${offsets[3].x} ${offsets[3].y}`;
+  }
+
+  for (let index = 0; index < points.length; index++) {
+    if (index < points.length - 2 || close) {
+      const p1 = points[index];
+      const p2 = points[(index + 1) % points.length];
+      const p3 = points[(index + 2) % points.length];
+
+      // Get points radius away from the next vertex on each line.
+      const offsets = getBezierPoints([p1, p2, p3], radius).map(p => `${p.x} ${p.y}`);
+
+      // Draw a line that is radius away from the next handle
+      // Draw a cubic bezier using the other radius offset + the magic circle points.
+      path += `L${offsets[0]}C${offsets[1]} ${offsets[2]} ${offsets[3]}`;
+
+    } else if (index === points.length - 2 && !close) {
+      // on the last move, just draw a line.
+      path += `L${points[index + 1].x} ${points[index + 1].y}`;
+    }
+  }
+
+  return path;
+}
+
 // top-left, top-right, btm-right, btm-left corner radius
 export function drawRoundedRect(rect: Rectangle, tl: number, tr = tl, br = tl, bl = tr) {
   const {p, w, h} = rect;
@@ -171,19 +233,19 @@ export function drawSVG(obj: GeoElement, options: SVGDrawingOptions = {}): strin
   }
 
   if (isPolyline(obj)) {
+    if (options.cornerRadius) return drawRoundedPath(obj.points, options.cornerRadius, false);
     return drawPath(...obj.points);
   }
 
-  if (isPolygon(obj)) {
-    // TODO Implement `options.cornerRadius`
+  if (isPolygon(obj) || (isRectangle(obj) && options.cornerRadius)) {
+    if (options.cornerRadius) {
+      return drawRoundedPath(obj.points, options.cornerRadius, true);
+    }
     return `${drawPath(...obj.points)}Z`;
   }
 
   if (isRectangle(obj)) {
-    if (!options.cornerRadius) return `${drawPath(...obj.polygon.points)}Z`;
-    const rect = obj.unsigned;
-    const radius = Math.min(options.cornerRadius, rect.w / 2, rect.h / 2);
-    return drawRoundedRect(rect, radius);
+    return `${drawPath(...obj.polygon.points)}Z`;
   }
 
   return '';
