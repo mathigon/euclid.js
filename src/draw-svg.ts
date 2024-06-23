@@ -153,7 +153,7 @@ function drawRoundedPath(points: Point[], radius: number, close = false) {
       const p3 = points[(index + 2) % points.length];
 
       // Get points radius away from the next vertex on each line.
-      const offsets = getBezierPoints([p1, p2, p3], radius).map(p => `${p.x.toFixed(2)} ${p.y.toFixed(2)}`);
+      const offsets = getBezierPoints([p1, p2, p3], radius).map(p => `${p.x} ${p.y}`);
 
       // Draw a line that is radius away from the next handle
       // Draw a cubic bezier using the other radius offset + the magic circle points.
