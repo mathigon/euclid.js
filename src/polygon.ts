@@ -6,7 +6,6 @@
 
 import {last, tabulate} from '@mathigon/core';
 import {nearlyEquals} from '@mathigon/fermat';
-import {difference, intersect, union} from './boolean';
 import {Circle} from './circle';
 import {intersections} from './intersection';
 import {Line, Segment} from './line';
@@ -88,20 +87,6 @@ export class Polygon implements GeoShape {
     return new this.constructor(...points);
   }
 
-  /** Cut this polygon along a line, and return multiple parts. */
-  cut(line: Line, precision?: number) {
-    // This feels a bit hacky... can we find the bounding box of the Polygon?
-    const t = this.radius / line.length * 10;
-    const a = line.at(-t);
-    const b = line.at(t);
-    const d = line.perpendicularVector.scale(line.length * t);
-    const mask = [a, b, b.add(d), a.add(d)];
-
-    const side1 = intersect([this.points], [mask], precision);
-    const side2 = difference([this.points], [mask], precision);
-    return [...side1, ...side2].map(p => new Polygon(...p));
-  }
-
   /** Checks if two polygons p1 and p2 collide. */
   static collision(p1: Polygon, p2: Polygon) {
     // Check if one of the vertices is in one of the polygons.
@@ -116,37 +101,6 @@ export class Polygon implements GeoShape {
     }
 
     return false;
-  }
-
-  static union(polygons: Polygon[], precision?: number): Polygon[] {
-    const [first, ...other] = polygons;
-    if (!other.length) return [first];
-
-    const p1 = [first.points];
-    const p2 = other.length > 1 ? Polygon.union(other, precision).map(p => p.points) : [polygons[1].points];
-    return union(p1, p2, precision).map(p => new Polygon(...p));
-  }
-
-  static intersection(polygons: Polygon[], precision?: number): Polygon[] {
-    const [first, ...other] = polygons;
-    if (!other.length) return [first];
-
-    let intersection = [first.points];
-
-    for (const poly of other) {
-      const p1 = intersection;
-      const p2 = [poly.points];
-      intersection = intersect(p1, p2, precision);
-      if (!intersection.length) return [];
-    }
-
-    return intersection.map(p => new Polygon(...p));
-  }
-
-  static difference(p1: Polygon, p2: Polygon, precision?: number): Polygon[] {
-    const poly12 = difference([p1.points], [p2.points], precision);
-    const poly21 = difference([p2.points], [p1.points], precision);
-    return poly12.concat(poly21).map(p => new Polygon(...p));
   }
 
   /** Creates a regular polygon. */

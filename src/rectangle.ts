@@ -118,10 +118,6 @@ export class Rectangle implements GeoShape {
     return this.polygon.offset(p);
   }
 
-  cut(line: Line) {
-    return this.polygon.cut(line);
-  }
-
   get oriented() {
     return this.polygon.oriented;
   }
