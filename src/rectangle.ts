@@ -151,7 +151,7 @@ export class Rectangle implements GeoShape {
   }
 
   equals(other: Polygon) {
-    return Polygon.collision(this.polygon, other);
+    return this.polygon.equals(other);
   }
 
   toString() {
