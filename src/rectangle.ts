@@ -79,7 +79,7 @@ export class Rectangle implements GeoShape {
 
   collision(r: Rectangle) {
     return (this.p.x < r.p.x + r.w && this.p.x + this.w > r.p.x &&
-            this.p.y < r.p.y + r.h && this.p.y + this.h > r.p.y);
+      this.p.y < r.p.y + r.h && this.p.y + this.h > r.p.y) || this.equals(r.polygon);
   }
 
   padding(top: number, right: number, bottom: number, left: number) {
@@ -150,9 +150,8 @@ export class Rectangle implements GeoShape {
     return this.shift(p.x, p.y);
   }
 
-  equals(_other: Polygon) {
-    // TODO Implement
-    return false;
+  equals(other: Polygon) {
+    return this.polygon.equals(other);
   }
 
   toString() {
