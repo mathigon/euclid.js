@@ -3,13 +3,10 @@
 // (c) Mathigon
 // =============================================================================
 
-
 import tape from 'tape';
-import {Line, Point, Polygon, Polyline} from '../src';
+import {Point, Polygon, Polyline, Rectangle} from '../src';
 
-
-const poly = (...p: number[][]) => new Polygon(...p.map(q => new Point(q[0], q[1])));
-
+const poly = (...p: number[][]) => new Polygon(...p.map((q) => new Point(q[0], q[1])));
 
 tape('Length and Circumference', (test) => {
   const p1 = poly([0, 0], [0, 1], [1, 1], [1, 0]);
@@ -30,5 +27,13 @@ tape('Convex Hull', (test) => {
   test.deepEquals(hull.points[1], points[2]);
   test.deepEquals(hull.points[2], points[3]);
 
+  test.end();
+});
+
+tape('Collision and Equals', (test) => {
+  const rect = new Rectangle(new Point(0, 0), 1);
+  const shape = poly([0, 0], [0, 1], [1, 1], [1, 0]);
+  test.equal(Polygon.collision(rect.polygon, shape), true);
+  test.equal(rect.equals(shape), true);
   test.end();
 });
