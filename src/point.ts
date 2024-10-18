@@ -8,7 +8,6 @@ import {total} from '@mathigon/core';
 import {clamp, lerp, nearlyEquals, Random, roundTo, square} from '@mathigon/fermat';
 import {Bounds} from './bounds';
 import {Line} from './line';
-import {isPoint} from './types';
 import {GeoElement, rad, SimplePoint, TransformMatrix} from './utilities';
 
 

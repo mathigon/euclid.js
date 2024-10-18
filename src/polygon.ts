@@ -3,7 +3,6 @@
 // (c) Mathigon
 // =============================================================================
 
-
 import {last, tabulate} from '@mathigon/core';
 import {nearlyEquals} from '@mathigon/fermat';
 import {Circle} from './circle';
@@ -11,7 +10,6 @@ import {intersections} from './intersection';
 import {Line, Segment} from './line';
 import {ORIGIN, Point} from './point';
 import {findClosest, GeoShape, SimplePoint, TransformMatrix, TWO_PI} from './utilities';
-
 
 /** A polygon defined by its vertex points. */
 export class Polygon implements GeoShape {
@@ -88,7 +86,7 @@ export class Polygon implements GeoShape {
   }
 
   /** Checks if two polygons p1 and p2 collide. */
-  static collision(p1: Polygon, p2: Polygon) {
+  static collision(p1: Polygon, p2: Polygon, tolerance?: number) {
     // Check if one of the vertices is in one of the polygons.
     if (p1.points.some(q => p2.contains(q))) return true;
     if (p2.points.some(q => p1.contains(q))) return true;
@@ -100,7 +98,7 @@ export class Polygon implements GeoShape {
       }
     }
 
-    return false;
+    return p1.equals(p2, tolerance);
   }
 
   /** Creates a regular polygon. */
