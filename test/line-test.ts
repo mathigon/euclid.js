@@ -42,3 +42,12 @@ tape('line intercepts', (test) => {
 
   test.end();
 });
+
+tape('flip', (test) => {
+  const a = new Line(new Point(1, 1), new Point(2, 2));
+  const b = a.flip();
+  test.equals(b.p1, a.p2);
+  test.equals(b.p2, a.p1);
+
+  test.end();
+});
