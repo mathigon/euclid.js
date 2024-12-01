@@ -47,6 +47,12 @@ export class Circle implements GeoShape {
     return d <= this.r;
   }
 
+  /** Whether the given line intersects this circle */
+  intersect(l: Line) {
+    const closest = l.project(this.c);
+    return Point.distance(closest, this.c) < this.r;
+  }
+
   // ---------------------------------------------------------------------------
 
   project(p: Point) {
