@@ -37,10 +37,10 @@
     "@mathigon/fermat": "1.1.23"
   },
   "devDependencies": {
-    "@types/tape": "5.6.4",
+    "@types/tape": "5.8.1",
     "@typescript-eslint/eslint-plugin": "8.14.0",
     "@typescript-eslint/parser": "8.14.0",
-    "esbuild": "0.24.0",
+    "esbuild": "0.24.2",
     "eslint": "8.57.1",
     "eslint-plugin-import": "2.31.0",
     "tape": "5.9.0",
